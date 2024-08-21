@@ -20,8 +20,10 @@ from django.urls import path, include
 from django.conf import settings
 import debug_toolbar
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('posters/', include(('posters_app.urls', 'posters_app'), namespace='posters_app'))
 ]
 
 if settings.DEBUG:
