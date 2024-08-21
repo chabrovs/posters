@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'crispy_forms',
+    'posters_app',
 ]
 
 MIDDLEWARE = [
@@ -155,9 +156,18 @@ STATICFILES_DIRS = [
 if not DEBUG:
     STATIC_ROOT = ''
 
+
 # MEDIA SETTINGS
+
 MEDIA_ROOT = '/media/'
 MEDIA_URL = 'media/'
+
+
+# SESSION SETTINGS
+
+SESSION_EXPIRE_ON_BROWSER_CLOSE = False
+#SESSION_COOKIE_SECURE = True  # Use True if your site uses HTTPS
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
