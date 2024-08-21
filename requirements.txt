@@ -1,0 +1,17 @@
+# Django
+django
+django-debug-toolbar
+django-crispy-forms
+django-extensions
+django-redis
+
+# For Django applications
+phonenumbers
+celery
+
+# For front-end
+
+# Other packages
+python-dotenv
+psycopg2-binary
+autopep8
