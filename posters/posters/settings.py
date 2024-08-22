@@ -55,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'posters.middleware.EnsureSessionKeyMiddleware', # Custom. For all apps.
+
 ]
 
 # DEBUG-TOOLBAR
@@ -159,8 +161,8 @@ if not DEBUG:
 
 # MEDIA SETTINGS
 
-MEDIA_ROOT = '/media/'
-MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
 
 
 # SESSION SETTINGS

@@ -12,6 +12,7 @@ celery
 # For front-end
 
 # Other packages
+Pillow
 python-dotenv
 psycopg2-binary
 autopep8
