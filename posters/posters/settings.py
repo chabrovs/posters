@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'posters.middleware.EnsureSessionKeyMiddleware', # Custom. For all apps.
+    'posters.middleware.EnsureSessionKeyMiddleware', # Custom. Avail for all project apps.
 
 ]
 

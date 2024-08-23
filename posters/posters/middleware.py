@@ -1,5 +1,3 @@
-
-
 class EnsureSessionKeyMiddleware:
     """
     This class purpose is to ensure that the session_key is create for all Anonymous users within all project applications.

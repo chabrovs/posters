@@ -1,5 +1,6 @@
 import uuid
 from django.core.exceptions import ValidationError
+from django.utils.deconstruct import deconstructible
 import os
 
 
@@ -15,28 +16,36 @@ class SetUniqueImageNameException(Exception):
         return f'\n[Exception MSG]: {self.message}\n[Exception METHOD]: ({self.method})\n[Exception ARGS]: ({self.exception_arguments})'
 
 
-def get_unique_image_name(instance, image_filename: str | None) -> str:
-    """
-    Makes a unique filename for user uploaded images.
-    (#NOTE: Alter this exception before production. The exception must not the cause the app crush).
-    :Param instance: Instance of an Image.
-    :Param image_name: The name of an image user uploaded.
-    """
-    #NOTE: Define the upload path, e.g., 'poster_images/<unique_filename>'
-    default_media_subdirectory = 'poster_images'
+### [BLOCK] BUSINESS LOGIC ###
 
-    if not image_filename or image_filename == '':
-        return os.path.join(default_media_subdirectory, '')
-    
-    splitted_image_name: list = image_filename.split('.')
-    image_extension = str(splitted_image_name[-1])
-    unique_string = str(uuid.uuid4().hex)
-    unique_image_name = unique_string + '.' + image_extension
+@deconstructible
+class GetUniqueImageName:
+    def __init__(self, media_subdirectory: str = 'unknown_images') -> None:
+        self.model_instance = media_subdirectory
 
-    return os.path.join(default_media_subdirectory, unique_image_name)
+    def __call__(self, instance, image_filename: str | None) -> str:
+        """
+        Makes a unique filename for user uploaded images.
+        (#NOTE: Alter this exception before production. The exception must not the cause the app crush).
+        :Param instance: Instance of an Image.
+        :Param image_name: The name of an image user uploaded.
+        """
+        #NOTE: Define the upload path, e.g., 'poster_images/<unique_filename>'
+
+        if not image_filename or image_filename == '':
+            return os.path.join(self.model_instance, '')
+        
+        splitted_image_name: list = image_filename.split('.')
+        image_extension = str(splitted_image_name[-1])
+        unique_string = str(uuid.uuid4().hex)
+        unique_image_name = unique_string + '.' + image_extension
+
+        return os.path.join(self.model_instance, unique_image_name)
 
 
-def validate_image(image):
+### [BLOCK] VALIDATORS ###
+
+def validate_image_size(image):
     """
     Make sure that the image is validated.
     :Param: Image.
