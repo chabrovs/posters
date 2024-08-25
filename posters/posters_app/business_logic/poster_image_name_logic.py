@@ -4,7 +4,9 @@ from django.utils.deconstruct import deconstructible
 import os
 
 
-### [BOCK] EXCEPTIONS ###
+DEFAULT_IMAGE = "poster_images/default_image.png"
+
+#region: EXCEPTIONS
 class SetUniqueImageNameException(Exception):
     def __init__(self, method: str, exception_arguments: list, message: str = 'Set unique image name exception' ) -> None:
         self.method = method
@@ -15,8 +17,9 @@ class SetUniqueImageNameException(Exception):
     def __str__(self) -> str:
         return f'\n[Exception MSG]: {self.message}\n[Exception METHOD]: ({self.method})\n[Exception ARGS]: ({self.exception_arguments})'
 
+#endregion
 
-### [BLOCK] BUSINESS LOGIC ###
+#region: BUSINESS LOGIC
 
 @deconstructible
 class GetUniqueImageName:
@@ -42,8 +45,9 @@ class GetUniqueImageName:
 
         return os.path.join(self.model_instance, unique_image_name)
 
+#endregion
 
-### [BLOCK] VALIDATORS ###
+#region: VALIDATORS
 
 def validate_image_size(image):
     """
@@ -56,3 +60,5 @@ def validate_image_size(image):
 
     if file_size > limit_mb * 1024 * 1024:
         raise ValidationError("Max image size is 5 %s MB" % limit_mb)
+
+#endregion

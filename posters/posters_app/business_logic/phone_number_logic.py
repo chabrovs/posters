@@ -2,7 +2,7 @@ import phonenumbers
 from django.core.exceptions import ValidationError
 
 
-### [BLOCK] EXCEPTIONS ###
+#region: EXCEPTIONS
 
 class InvalidPhoneNumberException(Exception):
     def __init__(self, phone_number: str | None = None, message: str = 'The provided phone number is invalid') -> None:
@@ -23,8 +23,9 @@ class InvalidPhoneNumberValidation(ValidationError):
     def __str__(self) -> str:
         return f"[Exception MSG]: {self.message}\nProvided phone number ({self.phone_number})"
 
+#endregion
 
-### [BLOCK] BUSINESS LOGIC ###
+#region: BUSINESS LOGIC
 
 def standardize_phone_number(phone_number: str, region='RU') -> str:
     """
@@ -50,9 +51,12 @@ def standardize_phone_number(phone_number: str, region='RU') -> str:
     except phonenumbers.NumberParseException:
         raise InvalidPhoneNumberException(phone_number)
     
-
-### [BLOCK] MODEL VALIDATORS ###
+#endregion
+ 
+#region: VALIDATORS
 
 def validate_phone_number(phone_number: str | None) -> None:
     if phone_number == None:
         raise InvalidPhoneNumberValidation(phone_number)
+    
+#endregion 

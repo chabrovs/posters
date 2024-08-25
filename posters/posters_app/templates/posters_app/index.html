@@ -7,5 +7,32 @@
 <script src="{% static 'posters_app/js/index.js'%}" type="text/javascript"></script>
 
 <h1>Hello Posters App</h1>
+<div>
+    <ul>
+        {% for poster in recommended_posters %}
+            <li>
+                <div id="poster">
+                    <h3 id="posterHeader"> {{ poster.header }} </h3>
+                    <a href="{% url 'posters_app:poster_view' poster.id %}"> About Poster </a>
+                    <p id="posterDescription"> {{ poster.description }} </p>
+                    <p id="posterDescription"> {{ poster.status }} </p>
+                    <p id="posterDescription"> {{ poster.formatted_created }} </p>
+                    <p id="posterPhonenumber"> {{ poster.phone_number }} </p>
+                    <p id="posterEmail"> {{ poster.email }} </p>
+                    <p id="posterPrice"> {{ poster.price_rounded }} </p>
+                    <p id="posterCurrnecy"> {{ poster.currency }} </p>
+                    {% for image_path in poster.image_paths %}
+                        <img src="{% url 'posters_app:get_image_by_image_path' image_path %}" alt="Image">
+                    {% endfor %}
+                </div>
+                
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% comment %} {% for image in images %}
+        <h1>{{ image.image_path }}</h1>
+        <img src="{% url 'posters_app:get_image_by_image_id' image.id %}" alt="Image">
+{% endfor %} {% endcomment %}
 
 {% endblock %}

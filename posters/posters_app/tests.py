@@ -1,16 +1,18 @@
-from django.test import TestCase
+from django.test import TestCase, SimpleTestCase
 from .business_logic.poster_image_name_logic import GetUniqueImageName, SetUniqueImageNameException
 from .business_logic.phone_number_logic import standardize_phone_number
 from .business_logic.poster_currency_logic import validate_currency, ValidationError
+from .business_logic.posters_lite_logic import get_expire_timestamp, POSTERLITE_LIFETIME
 from posters_app.models import Poster, PosterCategories, PosterImages, PosterLite, PosterLiteImages
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 from decimal import Decimal
 import datetime
+from django.utils import timezone
 
 # Create your tests here.
 
-class TestPosterImageNameLogic(TestCase):
+class TestPosterImageNameLogic(SimpleTestCase):
     def setUp(self) -> None:
         self.test_data_default = {
             1: "test_image_name.jpg",
@@ -25,7 +27,7 @@ class TestPosterImageNameLogic(TestCase):
             self.assertNotEqual(GetUniqueImageName(media_subdirectory='poster_images').__call__(instance=None, image_filename=test_data), test_data)
 
 
-class TestPhoneNumberLogic(TestCase):
+class TestPhoneNumberLogic(SimpleTestCase):
     def setUp(self) -> None:
         self.test_data_default = {
             1: ('+79568457896', '+7 956 845-78-96'),
@@ -40,7 +42,21 @@ class TestPhoneNumberLogic(TestCase):
             self.assertEqual(standardize_phone_number(test_data[0]), test_data[1])
 
 
-class TestPosterCurrencyLogic(TestCase):
+class TestPosterLiteLogic(SimpleTestCase):
+    def setUp(self) -> None:
+        return super().setUp()
+    
+    def test_get_expire_timestamp(self) -> None:
+        current_time = timezone.now()
+        set_delta = POSTERLITE_LIFETIME
+        expected_expire_timestamp = current_time + set_delta
+        tested_method_expire_timestamp = get_expire_timestamp()
+        abs_time_difference_in_seconds = abs((expected_expire_timestamp - tested_method_expire_timestamp).total_seconds())
+
+        self.assertAlmostEqual(abs_time_difference_in_seconds, 0, delta=1)
+
+
+class TestPosterCurrencyLogic(SimpleTestCase):
     def setUp(self) -> None:
         self.test_data_default = {
             1: 'USD',

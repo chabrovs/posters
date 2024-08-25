@@ -4,6 +4,7 @@ import django.db.models.deletion
 import posters_app.business_logic.phone_number_logic
 import posters_app.business_logic.poster_currency_logic
 import posters_app.business_logic.poster_image_name_logic
+# import posters.posters_app.business_logic.poster_image_name_logic
 import uuid
 from django.db import migrations, models
 
