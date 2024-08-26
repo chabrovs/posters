@@ -4,7 +4,7 @@ from django.utils.deconstruct import deconstructible
 import os
 
 
-DEFAULT_IMAGE = "poster_images/default_image.png"
+DEFAULT_IMAGE = "poster_images/default_image.jpg"
 
 #region: EXCEPTIONS
 class SetUniqueImageNameException(Exception):

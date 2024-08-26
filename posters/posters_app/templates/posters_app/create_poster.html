@@ -3,15 +3,16 @@
 {% block title %}Create Poster{% endblock %}
 
 {% block content %}
+{% load crispy_forms_tags %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'posters_app/css/poster.css' %}">
-<script src="{% static 'posters_app/js/poster.js' %}" type="text/javascript"></script>
+<link rel="stylesheet" href="{% static 'posters_app/css/create_poster.css' %}">
+<script src="{% static 'posters_app/js/create_poster.js' %}" type="text/javascript"></script>
 
 <div id="create_poster">
     <h1>Create new Poster</h1>
     <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form|crispy }}
 
         <div id="image-formset">
             {{ formset.management_form }}
@@ -29,7 +30,7 @@
     </form>
 </div>
 
-<script>
+{% comment %} <script>
     document.addEventListener('DOMContentLoaded', function () {
         var formset = document.getElementById('image-formset');
         var addButton = document.getElementById('add-form-row');
@@ -74,5 +75,5 @@
             }
         });
     });
-</script>
+</script> {% endcomment %}
 {% endblock %}

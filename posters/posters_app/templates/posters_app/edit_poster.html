@@ -1,0 +1,68 @@
+<!-- edit_poster.html -->
+
+{% extends 'posters_base.html' %}
+
+{% block title %} Edit Poster {% endblock %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'posters_app/css/edit_poster.css' %}">
+<script src="{% static 'posters_app/js/edit_poster.js' %}" type="text/javascript"></script>
+
+{% comment %} BUG: Django debugtoolbar does not have access to its styles and js on this page. {% endcomment %}
+<h1>Edit Poster</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy}}
+
+    {% comment %} FIXME: Make Image altering avail (26.28.24) <devbackend_25_08_forms_urls_views> {% endcomment %}
+    {% comment %} <div id="image-formset">
+        {{ formset.management_form }}
+        {% for form in formset %}
+            <div class="form-row">
+                <h2>Image form ID: {{ form.instance.pk }}</h2>
+                {{ form.image_path.label_tag }} {{ form.image_path }}
+                {% if form.instance.pk %}
+                    <a href="#" class="remove-form-row">Remove</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div> {% endcomment %}
+
+    <button type="button" id="add-form-row">Add Image</button>
+    <button type="submit">Save Changes</button>
+</form>
+
+<script>
+{% comment %} FIXME: Make altering Images avail. {% endcomment %}
+{% comment %} document.addEventListener('DOMContentLoaded', function () {
+    var formset = document.getElementById('image-formset');
+    var addButton = document.getElementById('add-form-row');
+    var totalFormsInput = formset.querySelector('input[name="form-TOTAL_FORMS"]');
+
+    addButton.addEventListener('click', function () {
+        var formCount = parseInt(totalFormsInput.value);
+        var newForm = formset.querySelector('.form-row:last-child').cloneNode(true);
+        
+        // Update new form fields with correct index
+        newForm.innerHTML = newForm.innerHTML.replace(/form-(\d+)-/g, 'form-' + formCount + '-');
+        formset.appendChild(newForm);
+        
+        // Increment the total number of forms
+        totalFormsInput.value = formCount + 1;
+    });
+
+    formset.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-form-row')) {
+            e.preventDefault();
+            e.target.parentNode.remove();
+
+            // Decrement the total number of forms
+            totalFormsInput.value = parseInt(totalFormsInput.value) - 1;
+        }
+    });
+});
+</script> {% endcomment %}
+
+{% endblock %}

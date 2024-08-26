@@ -1,0 +1,20 @@
+{% extends 'posters_base.html' %}
+{% block title %} Categories {% endblock %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'posters_app/css/categories.css'%}">
+<script src="{% static 'posters_app/js/categories.js'%}" type="text/javascript"></script>
+
+<h1>Categories</h1>
+<div>
+    <ul>
+        {% for poster in posters %}
+            <li>
+                <a href="{% url 'posters_app:poster_view' poster.id %}">{{ poster }}</a>  
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
