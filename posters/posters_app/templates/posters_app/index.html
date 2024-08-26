@@ -13,6 +13,7 @@
             <li>
                 <div id="poster">
                     <h3 id="posterHeader"> {{ poster.header }} </h3>
+                    <h4>Poster id: {{ poster.id }}</h4>
                     <a href="{% url 'posters_app:poster_view' poster.id %}"> About Poster </a>
                     <p id="posterDescription"> {{ poster.description }} </p>
                     <p id="posterDescription"> {{ poster.status }} </p>
@@ -21,8 +22,8 @@
                     <p id="posterEmail"> {{ poster.email }} </p>
                     <p id="posterPrice"> {{ poster.price_rounded }} </p>
                     <p id="posterCurrnecy"> {{ poster.currency }} </p>
-                    {% for image_path in poster.image_paths %}
-                        <img src="{% url 'posters_app:get_image_by_image_path' image_path %}" alt="Image">
+                    {% for image_id in poster.image_ids%}
+                        <img src="{% url 'posters_app:get_image_by_image_path' image_id %}" alt="Image">
                     {% endfor %}
                 </div>
                 

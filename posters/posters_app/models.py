@@ -61,7 +61,7 @@ class PosterImages(models.Model):
     id = models.AutoField(primary_key=True)
     poster_id = models.ForeignKey('Poster', on_delete=models.CASCADE, related_name='porter_images')
     #NOTE: set default
-    image_path = models.ImageField(upload_to=GetUniqueImageName(media_subdirectory='poster_images'), default=DEFAULT_IMAGE, null=True, blank=True, validators=[validate_image_size])
+    image_path = models.ImageField(upload_to=GetUniqueImageName(media_subdirectory='poster_images'), default=DEFAULT_IMAGE, null=False, blank=True, validators=[validate_image_size])
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -104,7 +104,7 @@ class PosterLite(models.Model):
 class PosterLiteImages(models.Model):
     id = models.AutoField(primary_key=True)
     poster_id = models.ForeignKey('PosterLite', on_delete=models.CASCADE, related_name='porterLite_images')
-    image_path = models.ImageField(upload_to=GetUniqueImageName(media_subdirectory='poster_lite_images'), default=DEFAULT_IMAGE, null=True, blank=True, validators=[validate_image_size])
+    image_path = models.ImageField(upload_to=GetUniqueImageName(media_subdirectory='poster_lite_images'), default=DEFAULT_IMAGE, null=False, blank=True, validators=[validate_image_size])
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

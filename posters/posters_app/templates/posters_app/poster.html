@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="{% static 'posters_app/css/poster.css'%}">
 <script src="{% static 'posters_app/js/poster.js'%}" type="text/javascript"></script>
 
-<div id="poster">
+<div id="poster" csrf-token="{{ csrf_token }}">
     <h3 id="posterHeader"> {{ poster.header }} </h3>
     <p id="posterDescription"> {{ poster.description }} </p>
     <p id="posterDescription"> {{ poster.status }} </p>
@@ -17,8 +17,16 @@
     <p id="posterPrice"> {{ poster.price_rounded }} </p>
     <p id="posterCurrnecy"> {{ poster.currency }} </p>
     <p id="posterCurrnecy"> {{ poster.category_name }} </p>
-    {% for image_path in poster.image_paths %}
-        <img src="{% url 'posters_app:get_image_by_image_path' image_path %}" alt="Image">
+    {% for image_id in poster.image_ids %}
+        <img src="{% url 'posters_app:get_image_by_image_id' image_id %}" alt="Image">
     {% endfor %}
+    <form action="{% url 'posters_app:delete_poster_by_id' poster_id=poster.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this poster?');">Delete Poster</button>
+    </form>
+    <a href="{% url 'posters_app:edit_poster' poster.id %}">Edit poster </a>
 
+<script>
+    // {% comment %} var posterData = {{ csrf_token|json_script:"csrf_token" }}; {% endcomment %}
+</script>
 {% endblock %}
