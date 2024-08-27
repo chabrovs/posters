@@ -45,10 +45,12 @@ INSTALLED_APPS = [
     'django_extensions',
     'crispy_forms',
     'crispy_bootstrap4',
+    'user_account_app',
     'posters_app',
 ]
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -178,3 +180,10 @@ SESSION_EXPIRE_ON_BROWSER_CLOSE = False
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# AUTH USER
+LOGIN_URL = '/user_auth/login/'
+# LOGOUT_URL = '/posters_app/'
+LOGIN_REDIRECT_URL = '/user_account/view_account'
+LOGOUT_REDIRECT_URL = '/posters/'
