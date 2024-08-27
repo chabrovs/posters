@@ -1,0 +1,28 @@
+{% extends 'posters_base.html' %}
+
+{% block title %} {{ user.username }} {% endblock %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'user_account_app/css/user_sign_up.css' %}">
+<script src="{% static 'user_account_app/js/user_sign_up.js' %}" type="text/javascript"></script>
+
+<div class="container sm">
+    HELLO {{ user }}
+
+    <ul>
+    {% for key, value in user_fields %}
+        <li> {{ key|capfirst }} | {{ value }} </li>
+    {% endfor %}
+    </ul>
+
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+    <p>Edit profile <a href="{% url 'user_account_app:user_profile_edit' %}">Edit</a> </p>
+</div>
+
+{% endblock %}

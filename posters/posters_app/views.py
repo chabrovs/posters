@@ -144,6 +144,11 @@ def edit_poster(request, poster_id: int):
         # formset = EditPosterImageFormSet(request.POST, request.FILES, 
         # queryset=PosterImages.objects.filter(poster_id=poster_id))
 
+        # NOTE: If an Image id is not found in the formset,\ 
+        # you can pass this id using ` name="image_id" value={{ image.instance.pk }}` in HTML post request. As long as, \
+        # each picture has its owen PrimaryKey avail inside of the HTML via DTL. Therefore, you can just fetch \
+        # the image_id from that post form. `request.POST.get(image_id)`.
+
         #TODO: Implement Poster Images editing.
         if form.is_valid() and form.has_changed():
             form.save()
