@@ -11,6 +11,8 @@ from django.urls import reverse, reverse_lazy
 from .forms import CreatePosterForm, PosterImageFormSet, EditPosterForm, EditPosterImageFormSet
 from django.core.cache import cache
 from django.views.decorators.cache import never_cache
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 
 
@@ -83,6 +85,7 @@ class UserPostersView(TemplateView):
 
 #NOTE: Not implemented (25.28.24) <devbackend_24_08_views>'\
 # Login required.
+@login_required
 def create_poster(request):
     success_url = reverse('posters_app:home')
     if request.method == "POST":
@@ -121,10 +124,13 @@ def create_poster(request):
 # Login required.
 
 @never_cache
+@login_required
 def delete_poster_by_id(request, poster_id: int):
     poster = get_object_or_404(Poster, id=poster_id)
-    if poster.owner != User.objects.get(username='sergei'):
+    
+    if poster.owner != request.user:
         return HttpResponse(f"Not your poster")
+    
     poster_images = PosterImages.objects.filter(poster_id=poster_id)
 
     for poster_image in poster_images:
@@ -136,9 +142,14 @@ def delete_poster_by_id(request, poster_id: int):
 
 
 #NOTE: Only owner can edit its post.
+@login_required
 def edit_poster(request, poster_id: int):
-    poster = get_object_or_404(Poster, id=poster_id)
     success_url = reverse('posters_app:poster_view', args=(poster_id,))
+    poster = get_object_or_404(Poster, id=poster_id)
+
+    if poster.owner != request.user:
+        return HttpResponse("Cannot edit someone elses poster!")
+    
     if request.method == 'POST':
         form = EditPosterForm(request.POST, instance=poster)
         # formset = EditPosterImageFormSet(request.POST, request.FILES, 
