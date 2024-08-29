@@ -4,15 +4,19 @@
 
 
 {% block content %}
+{% load crispy_forms_tags %}
+{% load static %}
 
-
+<div class="container">
   <h2>Update Your Profile</h2>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|crispy }}
     <button type="submit">Update Profile</button>
     <p>Back to profile <a href="{% url 'user_account_app:view_user_account' %}">Go back</a> </p>
   </form>
+</div>
+
 
 
 {% endblock %}

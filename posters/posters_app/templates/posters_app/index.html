@@ -6,7 +6,142 @@
 <link rel="stylesheet" href="{% static 'posters_app/css/index.css'%}">
 <script src="{% static 'posters_app/js/index.js'%}" type="text/javascript"></script>
 
-<h1>Hello Posters App</h1>
+
+<div class="container">
+    <div class="container-fluid" id="search-bar">
+        <h4>Search Posters</h4>
+        <form method="get" action="{% url 'posters_app:home' %}">
+            {{ form.query.label_tag }}
+            {{ form.query }}
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <div class="container-fluid" id="main-grid">
+        <!-- ROW 1 -->
+        {% for poster in page_obj %}
+            {% if forloop.counter0|divisibleby:3 %}
+                <div class="row">
+            {% endif %}
+            <div class="col-md-4">
+                <div class="thumbnail">
+                    <a href="{% url 'posters_app:poster_view' poster.id %}">
+                        <img src="{% url 'posters_app:get_image_by_image_id' poster.image_ids.0 %}" alt="Image">
+                        <div class="caption">
+                            <h4><b>{{ poster.header }}</b></h4>
+                            <h5>{{ poster.price_rounded }} {{ poster.currency }}</h5>
+                            <h6>{{ poster.created }}</h6>
+                        </div>
+                    </a>
+                </div>
+
+                {% comment %} <div class="media">
+                    <a class="d-flex align-self-center" href="{% url 'posters_app:poster_view' poster.id %}">
+                        <img src="{% url 'posters_app:get_image_by_image_id' poster.image_ids.0 %}" alt="Image">
+                    </a>
+                    <div class="media-body">
+                        <h3>{{ poster.header }}</h3>
+                        <p>{{ poster.price_rounded }} {{ poster.currency }}</p>
+                        <p>{{ poster.created }}</p>
+                    </div>
+                </div> {% endcomment %}
+            </div>
+            {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
+                </div>
+            {% endif %}
+
+        {% endfor %}
+    </div>
+    <div class="pagination">
+        <ul class="pagination">
+            <!-- "First" page link -->
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo; first</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">&laquo; first</a>
+                </li>
+            {% endif %}
+    
+            <!-- Previous page link -->
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">previous</a>
+                </li>
+            {% endif %}
+    
+            <!-- Page numbers -->
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <a class="page-link" href="#">{{ num }}</a>
+                    </li>
+                {% elif num > page_obj.number|add:'-5' and num < page_obj.number|add:'5' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+    
+            <!-- Next page link -->
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">next</a>
+                </li>
+            {% endif %}
+    
+            <!-- "Last" page link -->
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">last &raquo;</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div> 
+</div>
+
+
+
+{% comment %} 
+
+{% for row in recommended_posters_row %}
+<div class="row">
+ {% for poster in row %}
+     <div class="col-md-4">
+         <div class="media">
+             <a class="d-flex align-self-center" href="{% url 'posters_app:poster_view' poster.id %}">
+                 <img src="{% url 'posters_app:get_image_by_image_id' poster.image_ids.0 %}" alt="Image">
+             </a>
+             <div class="media-body">
+                 <h3>{{ poster.header }}</h3>
+                 <p>{{ poster.price_rounded }} {{ poster.currency }}</p>
+             </div>
+         </div>
+     </div>
+ {% endfor %}
+</div>
+{% endfor %} 
+
+
+{% endcomment %}
+
+
+
+
+{% comment %} <h1>Hello Posters App</h1>
 <div>
     <ul>
         {% for poster in recommended_posters %}
@@ -30,7 +165,7 @@
             </li>
         {% endfor %}
     </ul>
-</div>
+</div> {% endcomment %}
 {% comment %} {% for image in images %}
         <h1>{{ image.image_path }}</h1>
         <img src="{% url 'posters_app:get_image_by_image_id' image.id %}" alt="Image">

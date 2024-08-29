@@ -11,32 +11,33 @@
 <script src="{% static 'posters_app/js/edit_poster.js' %}" type="text/javascript"></script>
 
 {% comment %} BUG: Django debugtoolbar does not have access to its styles and js on this page. {% endcomment %}
-<h1>Edit Poster</h1>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form|crispy}}
+<div class="container">
+    <h1>Edit Poster</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form|crispy}}
+    
+        {% comment %} FIXME: Make Image altering avail (26.28.24) <devbackend_25_08_forms_urls_views> {% endcomment %}
+        {% comment %} <div id="image-formset">
+            {{ formset.management_form }}
+            {% for form in formset %}
+                <div class="form-row">
+                    <h2>Image form ID: {{ form.instance.pk }}</h2>
+                    {{ form.image_path.label_tag }} {{ form.image_path }}
+                    {% if form.instance.pk %}
+                        <a href="#" class="remove-form-row">Remove</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div> {% endcomment %}
+    
+        <button type="button" id="add-form-row">Add Image</button>
+        <button type="submit">Save Changes</button>
+    </form>
+</div>
 
-    {% comment %} FIXME: Make Image altering avail (26.28.24) <devbackend_25_08_forms_urls_views> {% endcomment %}
-    {% comment %} <div id="image-formset">
-        {{ formset.management_form }}
-        {% for form in formset %}
-            <div class="form-row">
-                <h2>Image form ID: {{ form.instance.pk }}</h2>
-                {{ form.image_path.label_tag }} {{ form.image_path }}
-                {% if form.instance.pk %}
-                    <a href="#" class="remove-form-row">Remove</a>
-                {% endif %}
-            </div>
-        {% endfor %}
-    </div> {% endcomment %}
-
-    <button type="button" id="add-form-row">Add Image</button>
-    <button type="submit">Save Changes</button>
-</form>
-
-<script>
 {% comment %} FIXME: Make altering Images avail. {% endcomment %}
-{% comment %} document.addEventListener('DOMContentLoaded', function () {
+    {% comment %} <script> document.addEventListener('DOMContentLoaded', function () {
     var formset = document.getElementById('image-formset');
     var addButton = document.getElementById('add-form-row');
     var totalFormsInput = formset.querySelector('input[name="form-TOTAL_FORMS"]');
