@@ -29,6 +29,8 @@ class HomePageView(TemplateView):
         )
         context['recommended_posters'] = recommended_posters
         context["images"] = PosterImages.objects.all()
+        context["number_of_rows"] = range(3)
+        context["number_of_columns"] = range(3)
         return context 
     
 
@@ -127,7 +129,7 @@ def create_poster(request):
 @login_required
 def delete_poster_by_id(request, poster_id: int):
     poster = get_object_or_404(Poster, id=poster_id)
-    
+
     if poster.owner != request.user:
         return HttpResponse(f"Not your poster")
     

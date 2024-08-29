@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>{% block title %} Posters Project Base {% endblock %}</title>
 
     {% load static %}
@@ -13,20 +14,16 @@
 
     {% block header %}
     <header>
-        <div id="header" class="container-fluid">
-            <nav>
-                <a href="{% url 'posters_app:home' %}">Posters</a>
-                <a href="{% url 'posters_app:categories' %}">Categories</a>
-                {% if user.is_authenticated %}
-                <a href="{% url 'user_account_app:view_user_account' %}">Profile</a>
-                <p>Logged in as {{ user.username }} </p>
-
-                {% else %}
-                    <p>SignIn </p><a href="/login/">LogIn</a>
-                    <p>SignUp </p><a href="{% url 'user_account_app:user_sign_up' %}">LogIn</a>
-                {% endif %}
-            </nav>
-        </div>
+        <div class="topnav">
+            <a href="{% url 'posters_app:home' %}">Posters</a>
+            <a href="{% url 'posters_app:categories' %}">Categories</a>
+            <a class="create-poster" href="{% url 'posters_app:create_poster' %}">Create post</a>
+            {% if user.is_authenticated %}
+                <p class="split" style="color: white;">Logged in as {{ user.username }} </p><a class="split" href="{% url 'user_account_app:view_user_account' %}">Profile</a>
+            {% else %}
+            <a class="split" href="/user_auth/login/">SignIn</a>
+            {% endif %}  
+        </div>     
     </header>
     
     {% endblock %}
