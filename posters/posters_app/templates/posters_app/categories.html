@@ -8,7 +8,17 @@
 
 <div class="container">
     <h1>Categories:</h1>
-    <ul>
+    <ul class="list-group">
+        {% for category in categories %}
+        <li class="list-group-item"> <span class="badge"> {{ category.posters_in_category}} </span>
+            <a href="{% url 'posters_app:list_posters_in_category' category.name %}"> {{ category }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+
+
+
+    {% comment %} <ul>
         {% for category in categories %}
         <div class="container-fluid">
             <li>
@@ -18,7 +28,7 @@
             </li>
         </div>
         {% endfor %}
-    </ul>
+    </ul> {% endcomment %}
 </div>
 
 {% endblock %}

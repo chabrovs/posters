@@ -23,3 +23,7 @@ class RoundDecimal(Func):
             output_field = DecimalField()
         super().__init__(*expressions, output_field=output_field, **extra)
         self.template = f"%(function)s(%(expressions)s, {decimal_places})"
+
+
+class SearchEngine:
+    ...

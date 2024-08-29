@@ -1,5 +1,6 @@
-from typing import Any
+from typing_extensions import Any, Generator
 from django.db.models.query import QuerySet
+from django.db.models import Count
 from django.shortcuts import render
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -8,29 +9,79 @@ from .models import Poster, PosterImages, User, PosterCategories
 from django.contrib.postgres.aggregates import ArrayAgg
 from .business_logic.view_logic import FormatTimestamp, RoundDecimal, F
 from django.urls import reverse, reverse_lazy
-from .forms import CreatePosterForm, PosterImageFormSet, EditPosterForm, EditPosterImageFormSet
+from .forms import CreatePosterForm, PosterImageFormSet, EditPosterForm, EditPosterImageFormSet, SearchForm
 from django.core.cache import cache
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, Page
 # Create your views here.
 
 
 class HomePageView(TemplateView):
     template_name = 'posters_app/index.html'
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        #TODO: Make AJAX request support for fetching data.
-        context = super().get_context_data(**kwargs)
-        recommended_posters = Poster.objects.annotate(
+    def __init__(self, **kwargs: Any) -> None:
+        self.recommended_posters = Poster.objects.annotate(
         image_ids=ArrayAgg('porter_images__id'), 
         formatted_created=FormatTimestamp('created', format_style='YYYY-MM-DD HH24:MI'),
         price_rounded=RoundDecimal('price', decimal_places=2)
         )
-        context['recommended_posters'] = recommended_posters
-        context["images"] = PosterImages.objects.all()
-        context["number_of_rows"] = range(3)
-        context["number_of_columns"] = range(3)
+
+        super().__init__(**kwargs)
+    
+    def get_page(self, queryset: QuerySet, chunk_size: int, page_number: int) -> Page:
+        """
+        Makes a page for displaying QuerySet elements by chunks 
+        in pages using Django built-in pagination tool.
+        :Param queryset: Set of posters.
+        :Param chunk_size: Number of element (posters) on the page.
+        :Param page number: Page number. E.g. '?page=1'.
+        """
+        paginator = Paginator(queryset, chunk_size)
+        page_obj = paginator.get_page(page_number)
+
+        return page_obj
+    
+    def get_search_results(self, queryset: QuerySet | None) -> QuerySet | None:
+        """
+        Search records in the `posters_app_poster` by headers.
+        :Param queryset: Keyword to look for in posters headers. In URL `/?query=something`.
+        """
+        if not queryset:
+            return None
+
+        return self.recommended_posters.filter(header__icontains=queryset) | self.recommended_posters.filter(description__icontains=queryset)
+    
+    def smart_pagination(self, page_number: int, chunk_size: int, search: QuerySet | None) -> Page:
+        """
+        Paginate home page with the default QuerySet, when search is used, paginate the
+        filtered default QuerySey (search results).
+        :Param page_number: Chosen page number (required for pagination).
+        :Param chuck_size: Number of items per page (required for pagination).
+        :Param search: A QuerySet of keywords (required for searching (filtering)). 
+        """
+        if search:
+            search_result = self.get_search_results(search)
+            return self.get_page(search_result, chunk_size, page_number)
+        
+        return self.get_page(self.recommended_posters, chunk_size, page_number)
+
+    def chucked(self, queryset: QuerySet, chuck_size: int) -> Generator[QuerySet]:
+        for i in range(0, len(queryset), chuck_size):
+            yield queryset[i:i + chuck_size]
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        #TODO: Make AJAX request support for fetching data. Update: might be not needed.
+        context = super().get_context_data(**kwargs)
+        context['recommended_posters_row'] = self.chucked(self.recommended_posters, 3)
+        context['page_obj'] = self.smart_pagination(self.request.GET.get('page'), 9, self.request.GET.get('query'))
+        # context['page_obj'] = self.get_page(self.recommended_posters, 9, self.request.GET.get('page'))
+        # context['search_results'] = self.get_page(
+        #     self.get_search_results(self.request.GET.get('query')), 9, self.request.GET.get('page')
+        # ) 
+        context['form'] = SearchForm()
+        # context["images"] = PosterImages.objects.all()
+
         return context 
     
 
@@ -38,7 +89,9 @@ class PosterCategoriesView(TemplateView):
     template_name = 'posters_app/categories.html'
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        categories = PosterCategories.objects.all()
+        categories = PosterCategories.objects.annotate(
+            posters_in_category = (Count('poster'))
+        )
         context['categories'] = categories
         return context 
 
@@ -51,6 +104,7 @@ class CategoryView(ListView):
     def get_queryset(self) -> QuerySet[Any]:
         category_name = self.kwargs.get('category_name')
         return Poster.objects.filter(category__name=category_name)
+
 
 class PosterView(TemplateView):
     template_name = 'posters_app/poster.html'

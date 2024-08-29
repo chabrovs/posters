@@ -41,3 +41,7 @@ class EditPosterForm(forms.ModelForm):
     class Meta:
         model = Poster
         fields = ['header', 'description', 'phone_number', 'email', 'category', 'price', 'currency']
+
+
+class SearchForm(forms.Form):
+    query = forms.CharField(label='Search', max_length=255)

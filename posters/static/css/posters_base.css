@@ -4,66 +4,22 @@ body {
     min-height: 100vh;
 }
 
-/* Create a top navigation bar with a black background color  */
-.topnav {
-    background-color: #333;
-    overflow: hidden;
-}
-
-/* Style the links inside the navigation bar */
-.topnav a {
-    border-radius: 10%;
-    float: left;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
-}
-
-.topnav p {
-    float: left;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
-}
-.topnav p.split {
-    float: right;
-    color: white;
-}
-
-/* Change the color of links on hover */
-.topnav a:hover {
-    background-color: #ddd;
+#create-poster-link {
+    background-color: aliceblue;
+    margin-top: 3px;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     color: black;
+    border-radius: 10px;
+
+    
 }
 
-
-.topnav a.create-poster {
-    float: right;
-    border-radius: 16px;
-    background-color: rgb(64, 64, 255);
-    color: white;
-    margin-left: 30px;
-    margin-right: 30px;
-    margin-top: 6px;
-    margin-bottom: 10px;
-    padding: 10px 26px;
+#create-poster-link:hover {
+    background-color: antiquewhite;
 }
-
-/* Create a right-aligned (split) link inside the navigation bar */
-.topnav a.split {
-    float: right;
-    border-radius: 10%;
-    background-color: #04AA6D;
-    color: white;
-}
-
-
-
-
 /* FOOTER */
 
 footer {
@@ -83,9 +39,9 @@ body.scrolled footer {
 }
 
 
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
     .topnav a.create-poster {
         padding: 10px 15px;
 
     }
-}
+} */

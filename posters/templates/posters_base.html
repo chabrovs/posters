@@ -14,7 +14,29 @@
 
     {% block header %}
     <header>
-        <div class="topnav">
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+              <div class="navbar-header">
+                <a class="navbar-brand" href="{% url 'posters_app:home' %}">Posters</a>
+              </div>
+              <ul class="nav navbar-nav">
+                <li><a href="{% url 'posters_app:home' %}">Home</a></li>
+                <li><a href="{% url 'posters_app:categories' %}">Categories</a></li>
+                <li><a id="create-poster-link" href="{% url 'posters_app:create_poster' %}">Create poster</a></li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'user_account_app:view_user_account' %}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                {% else %}
+                <li><a href="{% url 'user_account_app:user_sign_up' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                <li><a href="/user_auth/login/"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                {% endif %}
+              </ul>
+            </div>
+          </nav>
+
+
+        {% comment %} <div class="topnav">
             <a href="{% url 'posters_app:home' %}">Posters</a>
             <a href="{% url 'posters_app:categories' %}">Categories</a>
             <a class="create-poster" href="{% url 'posters_app:create_poster' %}">Create post</a>
@@ -23,7 +45,7 @@
             {% else %}
             <a class="split" href="/user_auth/login/">SignIn</a>
             {% endif %}  
-        </div>     
+        </div>      {% endcomment %}
     </header>
     
     {% endblock %}
