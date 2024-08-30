@@ -15,17 +15,27 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, Page
+from django.core.cache import cache
+import io
+
 # Create your views here.
 
 
 class HomePageView(TemplateView):
     template_name = 'posters_app/index.html'
     def __init__(self, **kwargs: Any) -> None:
-        self.recommended_posters = Poster.objects.annotate(
-        image_ids=ArrayAgg('porter_images__id'), 
-        formatted_created=FormatTimestamp('created', format_style='YYYY-MM-DD HH24:MI'),
-        price_rounded=RoundDecimal('price', decimal_places=2)
-        )
+        self.recommended_posters_cache_key = 'recommended_posters'
+
+        self.recommended_posters = cache.get(self.recommended_posters_cache_key)
+
+        if not self.recommended_posters:
+            self.recommended_posters = self.recommended_posters = Poster.objects.annotate(
+                image_ids=ArrayAgg('porter_images__id'), 
+                formatted_created=FormatTimestamp('created', format_style='YYYY-MM-DD HH24:MI'),
+                price_rounded=RoundDecimal('price', decimal_places=2)
+            )
+            cache.set(self.recommended_posters_cache_key, self.recommended_posters, timeout=1000)
+        
 
         super().__init__(**kwargs)
     
@@ -103,7 +113,11 @@ class CategoryView(ListView):
     context_object_name = 'posters'
     def get_queryset(self) -> QuerySet[Any]:
         category_name = self.kwargs.get('category_name')
-        return Poster.objects.filter(category__name=category_name)
+        return Poster.objects.filter(category__name=category_name).annotate(
+            image_ids=ArrayAgg('porter_images__id'), 
+            formatted_created=FormatTimestamp('created', format_style='YYYY-MM-DD HH24:MI'),
+            price_rounded=RoundDecimal('price', decimal_places=2)
+        )
 
 
 class PosterView(TemplateView):
@@ -118,6 +132,7 @@ class PosterView(TemplateView):
             category_name=F('category__name')
             ).first()
         context['poster'] = poster
+        context['user'] = self.request.user
         return context 
     
 
@@ -234,7 +249,16 @@ def get_image_by_image_id(request, image_id: int | None):
     try:
         image = get_object_or_404(PosterImages, id=image_id)
         image_path = image.image_path.path
-        return FileResponse(open(image_path, 'rb'))
+        image_file_cache_key = f'image_by_id={image_path}'
+
+        # Caching
+        image_file_data = cache.get(image_file_cache_key)
+        if not image_file_data:
+            with open(image_path, 'rb') as image_file:
+                image_file_data = image_file.read()
+            cache.set(image_file_cache_key, image_file_data, 60)
+
+        return FileResponse(io.BytesIO(image_file_data), content_type='image/jpeg')
     except PosterImages.DoesNotExist:
         return Http404("Image does not exist!")
     except Exception as e:

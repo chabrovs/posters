@@ -26,6 +26,17 @@
             </form>
     
             <p>Edit profile <a href="{% url 'user_account_app:user_profile_edit' %}">Edit</a> </p>
+
+            <form method="post" action="{% url 'user_account_app:deactivate_user_account' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning" onclick="return confirm('Are you sure you want to delete this poster?');">Deactivate</button>
+            </form>
+
+            <form method="post" action="{% url 'user_account_app:delete_user_account' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this poster?');";>Delete</button>
+            </form>
+
         </div>
       </div>
 </div>
