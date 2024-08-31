@@ -38,6 +38,7 @@ def user_profile_edit(request):
 
     return render(request, 'user_account_app/user_account_edit.html', {"form": form})
 
+
 def user_sign_up(request):
     if request.method == 'POST':
         form = CustomUserCreatingForm(request.POST)
@@ -58,10 +59,10 @@ def deactivate_user(request):
         user.save()
         return redirect("posters_app:home")
 
+
 @login_required
 def delete_user(request):
     if request.method == "POST":
         user = request.user
         user.delete()
         return redirect('posters_app:home')
-

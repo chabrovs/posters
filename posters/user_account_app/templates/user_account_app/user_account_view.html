@@ -5,17 +5,20 @@
 {% block content %}
 {% load crispy_forms_tags %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'user_account_app/css/user_sign_up.css' %}">
-<script src="{% static 'user_account_app/js/user_sign_up.js' %}" type="text/javascript"></script>
+<link rel="stylesheet" href="{% static 'user_account_app/css/user_account_view.css' %}">
+
 
 <div class="container">
-    <h2>Hello {{ user }} </h2>
-    <h4>Account information: </h4>
-    <ul>
-    {% for key, value in user_fields %}
-        <li> {{ key|capfirst }} | {{ value }} </li>
-    {% endfor %}
-    </ul>
+    <div class="container">
+        <h2>Hello {{ user }} </h2>
+        <h4>Account information: </h4>
+        <ul>
+        {% for key, value in user_fields %}
+            <li> <p> <b>{{ key|capfirst }}</b> | {{ value }}</p>  </li>
+        {% endfor %}
+        </ul>
+    </div>
+    
 
     <div class="panel panel-info">
         <div class="panel-heading">Account management</div>
