@@ -97,6 +97,7 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": os.getenv("REDIS_LOCATION"),
         "OPTIONS": {
+            'db': '0',
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }

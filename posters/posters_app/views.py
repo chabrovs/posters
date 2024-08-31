@@ -15,18 +15,30 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, Page
+from django.core.cache import cache
+import io
+
 # Create your views here.
+# CACHE VARIABLES
+RECOMMENDED_POSTERS_CACHE_KEY = 'recommended_posters_cached'
+CATEGORIES_CACHE_KEY = 'categories_cached'
 
 
 class HomePageView(TemplateView):
     template_name = 'posters_app/index.html'
     def __init__(self, **kwargs: Any) -> None:
-        self.recommended_posters = Poster.objects.annotate(
-        image_ids=ArrayAgg('porter_images__id'), 
-        formatted_created=FormatTimestamp('created', format_style='YYYY-MM-DD HH24:MI'),
-        price_rounded=RoundDecimal('price', decimal_places=2)
-        )
+        
+        # Cache
+        self.recommended_posters = cache.get(RECOMMENDED_POSTERS_CACHE_KEY)
 
+        if not self.recommended_posters:
+            self.recommended_posters = self.recommended_posters = Poster.objects.annotate(
+                image_ids=ArrayAgg('porter_images__id'), 
+                formatted_created=FormatTimestamp('created', format_style='YYYY-MM-DD HH24:MI'),
+                price_rounded=RoundDecimal('price', decimal_places=2)
+            )
+            cache.set(RECOMMENDED_POSTERS_CACHE_KEY, self.recommended_posters, timeout=60*3)
+        
         super().__init__(**kwargs)
     
     def get_page(self, queryset: QuerySet, chunk_size: int, page_number: int) -> Page:
@@ -80,19 +92,28 @@ class HomePageView(TemplateView):
         #     self.get_search_results(self.request.GET.get('query')), 9, self.request.GET.get('page')
         # ) 
         context['form'] = SearchForm()
-        # context["images"] = PosterImages.objects.all()
 
         return context 
     
 
 class PosterCategoriesView(TemplateView):
     template_name = 'posters_app/categories.html'
+    def get_queryset(self):
+        # Cache
+        # NOTE: Invalidate when a new category or poster is created.
+        categories = cache.get(CATEGORIES_CACHE_KEY)
+
+        if not categories:
+            categories = PosterCategories.objects.annotate(
+            posters_in_category = (Count('poster'))
+            )
+            cache.set(CATEGORIES_CACHE_KEY, categories, 30)
+
+        return categories
+    
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        categories = PosterCategories.objects.annotate(
-            posters_in_category = (Count('poster'))
-        )
-        context['categories'] = categories
+        context['categories'] = self.get_queryset()
         return context 
 
 
@@ -103,7 +124,11 @@ class CategoryView(ListView):
     context_object_name = 'posters'
     def get_queryset(self) -> QuerySet[Any]:
         category_name = self.kwargs.get('category_name')
-        return Poster.objects.filter(category__name=category_name)
+        return Poster.objects.filter(category__name=category_name).annotate(
+            image_ids=ArrayAgg('porter_images__id'), 
+            formatted_created=FormatTimestamp('created', format_style='YYYY-MM-DD HH24:MI'),
+            price_rounded=RoundDecimal('price', decimal_places=2)
+        )
 
 
 class PosterView(TemplateView):
@@ -118,6 +143,7 @@ class PosterView(TemplateView):
             category_name=F('category__name')
             ).first()
         context['poster'] = poster
+        context['user'] = self.request.user
         return context 
     
 
@@ -165,6 +191,10 @@ def create_poster(request):
                     print(f'[DEBUG]: Default images were saved ')
                     image = PosterImages.objects.create(poster_id=poster)
                     image.save()
+            
+            # Cache validation
+            cache.delete(RECOMMENDED_POSTERS_CACHE_KEY)
+            cache.delete(CATEGORIES_CACHE_KEY)
 
             return redirect(success_url)
         else:
@@ -193,7 +223,10 @@ def delete_poster_by_id(request, poster_id: int):
         poster_image.delete()
 
     poster.delete()
-    # cache.clear()
+    # Cache validation
+    cache.delete(RECOMMENDED_POSTERS_CACHE_KEY)
+    cache.delete(CATEGORIES_CACHE_KEY)
+
     return redirect('posters_app:home')
 
 
@@ -220,6 +253,9 @@ def edit_poster(request, poster_id: int):
         if form.is_valid() and form.has_changed():
             form.save()
 
+            # Cache validation
+            cache.delete(RECOMMENDED_POSTERS_CACHE_KEY)
+
             return redirect(success_url)
         else:
             # print(f'[DEBUG] FORMSET ERRORS: {formset.errors}')
@@ -234,7 +270,16 @@ def get_image_by_image_id(request, image_id: int | None):
     try:
         image = get_object_or_404(PosterImages, id=image_id)
         image_path = image.image_path.path
-        return FileResponse(open(image_path, 'rb'))
+        image_file_cache_key = f'image_by_id={image_path}'
+
+        # Caching
+        image_file_data = cache.get(image_file_cache_key)
+        if not image_file_data:
+            with open(image_path, 'rb') as image_file:
+                image_file_data = image_file.read()
+            cache.set(image_file_cache_key, image_file_data, 60*3)
+
+        return FileResponse(io.BytesIO(image_file_data), content_type='image/jpeg')
     except PosterImages.DoesNotExist:
         return Http404("Image does not exist!")
     except Exception as e:

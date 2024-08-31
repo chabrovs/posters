@@ -7,8 +7,9 @@ from django.contrib.sessions.models import Session
 # (22.08.24) <devbackend_22_08_models>.
 from .business_logic.phone_number_logic import standardize_phone_number, validate_phone_number
 from .business_logic.poster_image_name_logic import GetUniqueImageName, validate_image_size, DEFAULT_IMAGE
-from .business_logic.poster_currency_logic import validate_currency
+from .business_logic.poster_currency_logic import validate_currency, CURRENCY_CHOICES
 from .business_logic.posters_lite_logic import get_expire_timestamp
+import os
 # Create your models here.
 
 
@@ -43,8 +44,8 @@ class Poster(models.Model):
     header = models.CharField(max_length=255)
     description = models.TextField(max_length=10000)
     category = models.ForeignKey('PosterCategories', on_delete=models.SET_NULL, null=True, blank=True)
-    price = models.DecimalField(max_digits=9, decimal_places=5)
-    currency = models.CharField(max_length=3, validators=[validate_currency])
+    price = models.DecimalField(max_digits=9, decimal_places=2)
+    currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, validators=[validate_currency, ])
 
     def __repr__(self) -> str:
         return f"id: ({self.id}) header: ({self.header}) status: ({self.status})"
@@ -56,6 +57,9 @@ class Poster(models.Model):
         self.phone_number = standardize_phone_number(self.phone_number)
         super().save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+
 
 class PosterImages(models.Model):
     id = models.AutoField(primary_key=True)
@@ -65,6 +69,14 @@ class PosterImages(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.image_path:
+            #NOTE: Avoid deleting the default Image !
+            if self.image_path != DEFAULT_IMAGE and os.path.isfile(self.image_path.path):
+                os.remove(self.image_path.path)
+
+        super().delete(*args, **kwargs)
 
 #endregion 
 
@@ -113,6 +125,14 @@ class PosterLiteImages(models.Model):
         return f"Image poster_id={self.poster_id}"
 
     def __str__(self) -> str:
-        return f"Image for poster id: ({self.poster_id})" 
+        return f"Image for poster id: ({self.poster_id})"
+     
+    def delete(self, *args, **kwargs):
+        if self.image_path:
+            #NOTE: Avoid deleting the default Image !
+            if self.image_path != DEFAULT_IMAGE and os.path.isfile(self.image_path.path):
+                os.remove(self.image_path.path)
+
+        super().delete(*args, **kwargs)
 
 #endregion 
