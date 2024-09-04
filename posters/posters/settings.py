@@ -156,19 +156,25 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+# region: DEVELOPMENT MEDIA and STATICS
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 
+# endregion 
+
+# region: PRODUCTION MEDIA and STATICS
 if not DEBUG:
+    STATIC_URL = 'static/'
+    MEDIA_URL = '/media/'
+
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
     STATIC_ROOT = ''
-
-
-# MEDIA SETTINGS
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-MEDIA_URL = '/media/'
+# endregion
 
 
 # SESSION SETTINGS
