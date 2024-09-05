@@ -47,6 +47,10 @@ INSTALLED_APPS = [
     'crispy_bootstrap4',
     'user_account_app',
     'posters_app',
+    'email_service',
+    'django_celery_results',
+    'django_celery_beat',
+
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
@@ -194,3 +198,19 @@ LOGIN_URL = '/user_auth/login/'
 # LOGOUT_URL = '/posters_app/'
 LOGIN_REDIRECT_URL = '/user_account/view_account'
 LOGOUT_REDIRECT_URL = '/posters/'
+
+
+# CELERY
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+CELERY_RESULT_EXPIRES = 3600
+
+
+# MAIL SERVICE
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'sergei2001101@gmail.com'
+EMAIL_HOST_PASSWORD = os.getenv('GMAIL')
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = 'sergei2001101@gmai.com'

@@ -9,14 +9,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import logout, login
+from .forms import EmailLogInForm, EmailLogInCodeVerificationForm
+from .business_logic.auth_logic import EmailVerification
 # Create your views here.
 
 
 @login_required
 def view_user_account(request):
     template_name = 'user_account_app/user_account_view.html'
-    # BUG: Duplicated SQL queries. FIXED.
-    # user = get_object_or_404(User, id=request.user.id)
     user_fields = [
         (field.name, getattr(request.user, field.name)) for field in request.user._meta.fields]
     context = {
@@ -49,6 +49,21 @@ def user_sign_up(request):
         form = CustomUserCreatingForm()
 
     return render(request, 'user_account_app/user_sign_up.html', {'form': form})
+
+
+def email_login(request):
+    if request.method == "POST":
+        form = EmailLogInForm(request.POST)
+        if form.is_valid():
+            EmailVerification.send_code()
+            return redirect("user_account_app:user_email_login_code_verification")
+    else:
+        form = EmailLogInForm()
+    return render(request, 'user_account_app/user_account_email_login.html', {"form": form})
+
+def emaiL_login_verification(request):
+    form = EmailLogInCodeVerificationForm()
+    return render(request, 'user_account_app/user_account_email_login_verification.html', {"form": form})
 
 
 @login_required

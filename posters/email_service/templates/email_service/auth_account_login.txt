@@ -1,0 +1,7 @@
+Hello from Posters!
+
+
+This is your code: {{ code|safe }}
+
+
+Use it to login to your email. 

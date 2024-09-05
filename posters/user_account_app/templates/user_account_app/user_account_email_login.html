@@ -1,0 +1,20 @@
+{% extends 'posters_base.html' %}
+
+{% block title %} Log In {% endblock %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'user_account_app/css/user_sign_up.css' %}">
+<script src="{% static 'user_account_app/js/user_sign_up.js' %}" type="text/javascript"></script>
+
+<div class="container sm">
+    <h2>Login by Email.</h2>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-success">Get code</button>
+    </form>
+</div>
+
+{% endblock %}
