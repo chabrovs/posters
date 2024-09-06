@@ -26,7 +26,7 @@ class UUIDGenerator(CodeGenerator):
     def generate_code(self, code_length: int = 6) -> int:
         """Generate code using UUID."""
         return int(str(uuid.uuid4().int)[:code_length])
-    
+
 
 class LateralGenerator(CodeGenerator):
     def generate_code(self, code_length: int = 12) -> Any:
@@ -61,30 +61,57 @@ class VerificationEntryHandler(ABC):
         """
         ...
 
+    @abstractmethod
+    def clear_entry(self, key: str) -> None:
+        """Clear entry after user has been verified (authenticated)."""
+        ...
+
 
 class RedisVerificationEntryHandler(VerificationEntryHandler):
-    def __init__(self, redis_client_host: str | None = None) -> None:
+    def __init__(self, redis_url: str | None = None) -> None:
+        """Connect to redis via a redis link."""
         super().__init__()
-        if not redis_client_host:
-            redis_client_host = settings.CELERY_RESULT_BACKEND
+        if not redis_url:
+            redis_url = settings.REDIS_LOCATION
 
-        self.redisClient = redis.StrictRedis(host=redis_client_host)
+        self.redisClient = redis.Redis.from_url(redis_url)
 
     def cache_entry(self, credentials: str, code: int | str, ttl: int = 240) -> None:
-        self.redisClient.set(credentials, code, ex=ttl)
+        try:
+            self.redisClient.set(credentials, code, ex=ttl)
+        except redis.RedisError as e:
+            # NOTE: Log error here
+            print(f"ERROR: Validation entry was not cached!")
+            pass
+
+    def get_entry(self, credentials: str) -> str | int | None:
+        return self.redisClient.get(credentials)
     
+    def clear_entry(self, key: str) -> None:
+        self.redisClient.delete(key)
+
 
 class VerificationCodeSender(ABC):
     """Implement code sending via different services (Email, phone_number, etc.)."""
+
     def __init__(self, code_generator: CodeGenerator, entry_handler: VerificationEntryHandler) -> None:
+        """
+        Initialize the sender with a code generator and an entry handler.
+        :Param code_generator: The strategy for generating the verification code.
+        :Param entry_handler: Where the code will be cached for later verification.
+        """
         super().__init__()
         self.code_generator: CodeGenerator = code_generator
         self.entry_handler: VerificationEntryHandler = entry_handler
 
-
     @abstractmethod
     def send_code(self, credentials: str) -> None:
         """Send verification code."""
+        ...
+
+    @abstractmethod
+    def verify_user(self, credentials: str, client_code: str) -> bool:
+        """Verify if the client provided credentials and code."""
         ...
 
 
@@ -96,22 +123,38 @@ class EmailVerification(VerificationCodeSender):
 
     def send_code(self, email: str) -> None:
         verification_code = self.code_generator.generate_code()
-        self.entry_handler.cache_entry(credentials=email, code=verification_code)
+        self.entry_handler.cache_entry(
+            credentials=email, code=verification_code)
         send_verification_code_task.delay(email, verification_code)
 
+    def verify_user(self, email: str, client_code: str) -> bool:
+        server_code = self.entry_handler.get_entry(email)
+        authentication_result = True if server_code == client_code.encode() else False
+        if authentication_result:
+            self.entry_handler.clear_entry(email)
+        return authentication_result
 
-class Auth(ABC):
+
+class VerificationFactory:
+    @staticmethod
+    def get_method(method: str) -> VerificationCodeSender:
+        match method:
+            case 'email':
+                return EmailVerification(
+                    UUIDGenerator(),
+                    RedisVerificationEntryHandler(redis_url="redis://localhost:6379/2"))
+            case _:
+                raise ValueError(
+                    f"Verification method ({method}) is not supported!")
+
+
+class Auth:
     """API for authentication logic."""
-    def __init__(self) -> None:
-        super().__init__()
-        self.components = {
-            "code_generator": UUIDGenerator(),
-            "entry_handler": RedisVerificationEntryHandler()
-        }
-        self.email_verificator = EmailVerification(
-            self.components.get("code_generator"),
-            self.components.get("entry_handler")
-        )
 
-    def send_code_email() -> None:
-        ...
+    def send_verification(method: str, credentials: str) -> None:
+        sender: VerificationCodeSender = VerificationFactory.get_method(method)
+        sender.send_code(credentials)
+
+    def verify_user(method: str, credentials: str, client_code: str) -> bool:
+        verifier: VerificationCodeSender = VerificationFactory.get_method(method)
+        return verifier.verify_user(str(credentials), str(client_code))

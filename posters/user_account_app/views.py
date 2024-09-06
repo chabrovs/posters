@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import logout, login
 from .forms import EmailLogInForm, EmailLogInCodeVerificationForm
-from .business_logic.auth_logic import EmailVerification
+from .business_logic.auth_logic import Auth
 # Create your views here.
 
 
@@ -55,14 +55,23 @@ def email_login(request):
     if request.method == "POST":
         form = EmailLogInForm(request.POST)
         if form.is_valid():
-            EmailVerification.send_code()
+            Auth.send_verification('email', form.cleaned_data['email'])
             return redirect("user_account_app:user_email_login_code_verification")
     else:
         form = EmailLogInForm()
     return render(request, 'user_account_app/user_account_email_login.html', {"form": form})
 
-def emaiL_login_verification(request):
-    form = EmailLogInCodeVerificationForm()
+def email_login_verification(request):
+    if request.method == "POST":
+        form = EmailLogInCodeVerificationForm(request.POST)
+        if form.is_valid():
+            if Auth.verify_user("email", form.cleaned_data['email'], form.cleaned_data['client_code']) == True:
+                print("Creating user's account")
+            else:
+                print("Wrong password or email")
+                return redirect("user_account_app:user_email_login")
+    else:
+        form = EmailLogInCodeVerificationForm()
     return render(request, 'user_account_app/user_account_email_login_verification.html', {"form": form})
 
 

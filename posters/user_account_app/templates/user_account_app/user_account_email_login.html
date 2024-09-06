@@ -10,7 +10,7 @@
 
 <div class="container sm">
     <h2>Login by Email.</h2>
-    <form action="" method="post">
+    <form action="{% url 'user_account_app:user_email_login' %}" method="post">
         {% csrf_token %}
         {{ form|crispy }}
         <button type="submit" class="btn btn-success">Get code</button>

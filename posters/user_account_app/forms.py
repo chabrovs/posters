@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django import forms
 from .business_logic.auth_logic import EmailVerification
 
+
 class CustomUserCreatingForm(UserCreationForm):
     # email = forms.EmailField(required=False, help_text="Not required")
     class Meta:
@@ -22,7 +23,6 @@ class EmailLogInForm(forms.Form):
     }))
 
     def send_verification_code(self) -> None:
-        email_verification = EmailVerification()
         EmailVerification.send_code(email=self.cleaned_data['email'])
 
 
@@ -33,6 +33,5 @@ class EmailLogInCodeVerificationForm(forms.Form):
             attrs={
                 "placeholder": "your email"
             }))
-    code = forms.IntegerField(widget=forms.TextInput(attrs={
-        "placeholder": "enter code from your email"
-    }))
+    client_code = forms.CharField(max_length=120, widget=forms.TextInput(
+        attrs={"placeholder": "Enter your code from email"}))

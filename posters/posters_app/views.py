@@ -11,7 +11,7 @@ from .business_logic.view_logic import FormatTimestamp, RoundDecimal, F
 from django.urls import reverse, reverse_lazy
 from .forms import CreatePosterForm, PosterImageFormSet, EditPosterForm, EditPosterImageFormSet, SearchForm
 from django.core.cache import cache
-from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import never_cache, cache_control
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, Page
@@ -266,6 +266,7 @@ def edit_poster(request, poster_id: int):
     return render(request, 'posters_app/edit_poster.html', {'form': form})
 
 
+@cache_control(max_age=240)
 def get_image_by_image_id(request, image_id: int | None):
     try:
         image = get_object_or_404(PosterImages, id=image_id)

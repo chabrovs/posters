@@ -1,5 +1,5 @@
 # Django
-django
+django==5.1
 django-debug-toolbar
 django-crispy-forms
 django-extensions
@@ -8,9 +8,9 @@ django-redis
 # For Django applications
 phonenumbers
 celery
-flower=2.0.1
-django-celery-results=2.5.1
-django-celery-beat=2.7.0
+flower==2.0.1
+django-celery-results==2.5.1
+django-celery-beat==2.7.0
 # For front-end
 crispy_bootstrap4
 

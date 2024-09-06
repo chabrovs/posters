@@ -13,7 +13,7 @@ def send_verification_code_email(email: str, code: int | str) -> Callable:
     }
 
     email_subject = "Posters Login Code."
-    email_body = render_to_string('emailSender/email_message.txt', context=context)
+    email_body = render_to_string('email_service/auth_account_login.txt', context=context)
     email = EmailMessage(
         email_subject, email_body, settings.DEFAULT_FROM_EMAIL, [email, ],
     )
