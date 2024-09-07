@@ -31,7 +31,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('posters/', include(('posters_app.urls', 'posters_app'), namespace='posters_app')),
     path('user_account/', include(('user_account_app.urls', 'user_account_app'), namespace='user_account_app')),
-    path('user_auth/', include("django.contrib.auth.urls")),
+    # path('user_auth/', include("django.contrib.auth.urls")),
 ]
 
 # NOTE: Comment in Production!

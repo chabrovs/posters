@@ -37,8 +37,8 @@ class LateralGenerator(CodeGenerator):
 class VerificationEntryHandler(ABC):
     """
     Verification entry is a key value pair where the key is a credential data,
-    like (user's email address, phone number, etc), and the value is a generated secret code.
-    The verification entry must be stored ofter the secret code generation on the server side,
+    (e.g. user's email address, phone number, etc.) and the value is a generated secret code.
+    The verification entry must be stored after the secret code generation on the server side,
     in order to be compare and verified with a user's provided secret code.
     """
 
@@ -63,13 +63,16 @@ class VerificationEntryHandler(ABC):
 
     @abstractmethod
     def clear_entry(self, key: str) -> None:
-        """Clear entry after user has been verified (authenticated)."""
+        """Clear entry after user is verified (authenticated)."""
         ...
 
 
 class RedisVerificationEntryHandler(VerificationEntryHandler):
     def __init__(self, redis_url: str | None = None) -> None:
-        """Connect to redis via a redis link."""
+        """
+        Connect to redis via a redis link.
+        :Param redis_url: A URL to redis. Correct format example is "redis://localhost:6379/3".
+        """
         super().__init__()
         if not redis_url:
             redis_url = settings.REDIS_LOCATION
@@ -86,12 +89,13 @@ class RedisVerificationEntryHandler(VerificationEntryHandler):
 
     def get_entry(self, credentials: str) -> str | int | None:
         return self.redisClient.get(credentials)
-    
+
     def clear_entry(self, key: str) -> None:
         self.redisClient.delete(key)
 
 
 class VerificationCodeSender(ABC):
+    #NOTE: Change the name of this class to sth. like VerificationCodeManager
     """Implement code sending via different services (Email, phone_number, etc.)."""
 
     def __init__(self, code_generator: CodeGenerator, entry_handler: VerificationEntryHandler) -> None:
@@ -106,12 +110,20 @@ class VerificationCodeSender(ABC):
 
     @abstractmethod
     def send_code(self, credentials: str) -> None:
-        """Send verification code."""
+        """
+        Send verification code.
+        :Param credentials: User provided email, phone number, account id, etc.
+        """
         ...
 
     @abstractmethod
     def verify_user(self, credentials: str, client_code: str) -> bool:
-        """Verify if the client provided credentials and code."""
+        """
+        Verify the client provided credentials and verification code.
+        :Param credentials: User provided email, phone number, account id, etc.
+        :Param client_code: User provided code, that is compared to the originally generated code
+        stored on the server side.
+        """
         ...
 
 
@@ -156,5 +168,6 @@ class Auth:
         sender.send_code(credentials)
 
     def verify_user(method: str, credentials: str, client_code: str) -> bool:
-        verifier: VerificationCodeSender = VerificationFactory.get_method(method)
+        verifier: VerificationCodeSender = VerificationFactory.get_method(
+            method)
         return verifier.verify_user(str(credentials), str(client_code))

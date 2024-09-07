@@ -23,7 +23,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">Account management</div>
         <div class="panel-body">
-            <form method="post" action="{% url 'logout' %}">
+            <form method="post" action="{% url 'user_account_app:user_logout' %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger">Logout</button>
             </form>

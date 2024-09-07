@@ -10,6 +10,7 @@ urlpatterns = [
     path("view_account", views.view_user_account, name='view_user_account'),
     path("deactivate_user", views.deactivate_user, name='deactivate_user_account'),
     path("delete_user", views.delete_user, name='delete_user_account'),
+    path("user_logout", views.user_logout, name='user_logout'),
 ]
 
 #NOTE: Now default URLs for password change, password_reset, etc..

@@ -31,7 +31,7 @@ class EmailLogInCodeVerificationForm(forms.Form):
         max_length=120,
         widget=forms.EmailInput(
             attrs={
-                "placeholder": "your email"
+                "readonly": "readonly"
             }))
     client_code = forms.CharField(max_length=120, widget=forms.TextInput(
         attrs={"placeholder": "Enter your code from email"}))

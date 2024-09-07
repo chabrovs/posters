@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 from .forms import CustomUserCreatingForm, UserProfileUpdateForm
@@ -11,6 +11,10 @@ from django.contrib import messages
 from django.contrib.auth import logout, login
 from .forms import EmailLogInForm, EmailLogInCodeVerificationForm
 from .business_logic.auth_logic import Auth
+import logging
+
+
+logger = logging.getLogger(__name__)
 # Create your views here.
 
 
@@ -55,23 +59,33 @@ def email_login(request):
     if request.method == "POST":
         form = EmailLogInForm(request.POST)
         if form.is_valid():
-            Auth.send_verification('email', form.cleaned_data['email'])
+            email = form.cleaned_data['email']
+            request.session['user_email'] = email
+            Auth.send_verification('email', email)
             return redirect("user_account_app:user_email_login_code_verification")
     else:
         form = EmailLogInForm()
     return render(request, 'user_account_app/user_account_email_login.html', {"form": form})
 
+
 def email_login_verification(request):
     if request.method == "POST":
         form = EmailLogInCodeVerificationForm(request.POST)
         if form.is_valid():
-            if Auth.verify_user("email", form.cleaned_data['email'], form.cleaned_data['client_code']) == True:
-                print("Creating user's account")
+            if Auth.verify_user("email", form.cleaned_data['email'], form.cleaned_data['client_code']):
+                user, created = User.objects.get_or_create(email=form.cleaned_data['email'])
+                if created:
+                    logger.debug(f"User is being created for {form.cleaned_data['email']}")
+                login(request, user)
+                return redirect('user_account_app:view_user_account')
             else:
-                print("Wrong password or email")
-                return redirect("user_account_app:user_email_login")
+                messages.error(request, "Wrong password or email!")
+                return redirect("user_account_app:user_email_login_code_verification")
+        else:
+            messages.error(request, "Please correct error bellow")
     else:
-        form = EmailLogInCodeVerificationForm()
+        email = request.session.get('user_email', None)
+        form = EmailLogInCodeVerificationForm(initial={"email": email})
     return render(request, 'user_account_app/user_account_email_login_verification.html', {"form": form})
 
 
@@ -90,3 +104,11 @@ def delete_user(request):
         user = request.user
         user.delete()
         return redirect('posters_app:home')
+
+
+@login_required
+def user_logout(request):
+    if request.method == "POST":
+        logout(request)
+        return redirect('posters_app:home')
+    
