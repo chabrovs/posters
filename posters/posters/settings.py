@@ -47,6 +47,10 @@ INSTALLED_APPS = [
     'crispy_bootstrap4',
     'user_account_app',
     'posters_app',
+    'email_service',
+    'django_celery_results',
+    'django_celery_beat',
+
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
@@ -156,19 +160,25 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+# region: DEVELOPMENT MEDIA and STATICS
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 
+# endregion 
+
+# region: PRODUCTION MEDIA and STATICS
 if not DEBUG:
+    STATIC_URL = 'static/'
+    MEDIA_URL = '/media/'
+
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
     STATIC_ROOT = ''
-
-
-# MEDIA SETTINGS
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-MEDIA_URL = '/media/'
+# endregion
 
 
 # SESSION SETTINGS
@@ -184,7 +194,66 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # AUTH USER
-LOGIN_URL = '/user_auth/login/'
-# LOGOUT_URL = '/posters_app/'
-LOGIN_REDIRECT_URL = '/user_account/view_account'
-LOGOUT_REDIRECT_URL = '/posters/'
+# LOGIN_URL = '/user_auth/login/'
+# # LOGOUT_URL = '/posters_app/'
+# LOGIN_REDIRECT_URL = '/user_account/view_account'
+# LOGOUT_REDIRECT_URL = '/posters/'
+
+
+# CELERY
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+CELERY_RESULT_EXPIRES = 3600
+CELERY_CACHE_BACKEND = os.getenv('CELERY_CACHE_BACKEND')
+
+
+# MAIL SERVICE
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'sergei2001101@gmail.com'
+EMAIL_HOST_PASSWORD = os.getenv('GMAIL')
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = 'sergei2001101@gmai.com'
+
+
+# DJANGO CUSTOM LOGGING
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'verbose': {
+#             'format': '{levelname} {asctime} {module} {message}',
+#             'style': '{',
+#         },
+#         'simple': {
+#             'format': '{levelname} {message}',
+#             'style': '{',
+#         },
+#     },
+#     'handlers': {
+#         'file': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(BASE_DIR, 'django_debug.log'),
+#             'formatter': 'verbose',
+#         },
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'simple',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['file', 'console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'user_account_app': {  # Your custom logger for the specific app
+#             'handlers': ['file', 'console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }

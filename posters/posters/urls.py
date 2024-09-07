@@ -16,18 +16,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls.static import static
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 import debug_toolbar
+# NOTE: Add in production!
+from django.conf.urls.static import static
+from django.views.static import serve
 
 
 urlpatterns = [
+    # NOTE: Uncomment in production!
+    # re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    # re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
     path('admin/', admin.site.urls),
     path('posters/', include(('posters_app.urls', 'posters_app'), namespace='posters_app')),
     path('user_account/', include(('user_account_app.urls', 'user_account_app'), namespace='user_account_app')),
-    path('user_auth/', include("django.contrib.auth.urls")),
+    # path('user_auth/', include("django.contrib.auth.urls")),
 ]
 
+# NOTE: Comment in Production!
 if settings.DEBUG:
     urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

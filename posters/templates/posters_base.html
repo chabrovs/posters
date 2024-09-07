@@ -29,8 +29,8 @@
                 {% if user.is_authenticated %}
                 <li><a href="{% url 'user_account_app:view_user_account' %}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
                 {% else %}
-                <li><a href="{% url 'user_account_app:user_sign_up' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                <li><a href="/user_auth/login/"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                {% comment %} <li><a href="{% url 'user_account_app:user_sign_up' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li> {% endcomment %}
+                <li><a href="{% url 'user_account_app:user_email_login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                 {% endif %}
               </ul>
             </div>
