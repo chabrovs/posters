@@ -59,13 +59,14 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  # Localization middleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'posters.middleware.EnsureSessionKeyMiddleware', # Custom. Avail for all project apps.
-
+    # Custom. Avail for all project apps.
+    'posters.middleware.EnsureSessionKeyMiddleware',
 ]
 
 # DEBUG-TOOLBAR
@@ -149,13 +150,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
-
+USE_I18N = True  # strings translation.
+USE_L10N = True  # local time, data and number formats.
+USE_TZ = True  # Timezone support.
+LANGUAGES = [
+    ('en', 'English'),
+    ('ru', 'Russian')
+]
+LOCALE_PATHS = [os.path.join(BASE_DIR, 'locale')]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -169,7 +172,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 
-# endregion 
+# endregion
 
 # region: PRODUCTION MEDIA and STATICS
 if not DEBUG:
@@ -184,7 +187,7 @@ if not DEBUG:
 # SESSION SETTINGS
 
 SESSION_EXPIRE_ON_BROWSER_CLOSE = False
-#SESSION_COOKIE_SECURE = True  # Use True if your site uses HTTPS
+# SESSION_COOKIE_SECURE = True  # Use True if your site uses HTTPS
 
 
 # Default primary key field type
@@ -194,9 +197,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # AUTH USER
-# LOGIN_URL = '/user_auth/login/'
+LOGIN_URL = '/user_account/email_login'
 # # LOGOUT_URL = '/posters_app/'
-# LOGIN_REDIRECT_URL = '/user_account/view_account'
+LOGIN_REDIRECT_URL = '/user_account/view_account'
 # LOGOUT_REDIRECT_URL = '/posters/'
 
 

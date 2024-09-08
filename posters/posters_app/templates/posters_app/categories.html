@@ -1,5 +1,6 @@
 {% extends 'posters_base.html' %}
-{% block title %} Categories {% endblock %}
+{% load i18n %}
+{% block title %} {% trans "Categories" %} {% endblock %}
 
 {% block content %}
 {% load static %}
@@ -7,7 +8,7 @@
 <script src="{% static 'posters_app/js/categories.js'%}" type="text/javascript"></script>
 
 <div class="container">
-    <h1>Categories:</h1>
+    <h1>{% trans "Categories:" %}</h1>
     <ul class="list-group">
         {% for category in categories %}
         <li class="list-group-item"> <span class="badge"> {{ category.posters_in_category}} </span>

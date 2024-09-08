@@ -1,5 +1,6 @@
 {% extends 'posters_base.html' %}
-{% block title %} Posters App {% endblock %}
+{% load i18n %}
+{% block title %} {% trans "Posters" %} {% endblock %}
 
 {% block content %}
 {% load static %}
@@ -9,11 +10,11 @@
 
 <div class="container">
     <div class="container-fluid" id="search-bar">
-        <h4>Search Posters</h4>
+        <h4>{% trans "Search posters" %}</h4>
         <form method="get" action="{% url 'posters_app:home' %}">
             {{ form.query.label_tag }}
             {{ form.query }}
-            <button type="submit">Search</button>
+            <button type="submit">{% trans "Search" %}</button>
         </form>
     </div>
     <div class="container-fluid" id="main-grid">
