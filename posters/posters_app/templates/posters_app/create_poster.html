@@ -1,6 +1,6 @@
 {% extends 'posters_base.html' %}
-
-{% block title %}Create Poster{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Create poster" %}{% endblock %}
 
 {% block content %}
 {% load crispy_forms_tags %}
@@ -9,7 +9,7 @@
 <script src="{% static 'posters_app/js/create_poster.js' %}" type="text/javascript"></script>
 
 <div class="container" id="create_poster">
-    <h1>Create new Poster</h1>
+    <h1>{% trans "Create new poster" %}</h1>
     <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form|crispy }}
@@ -17,16 +17,15 @@
         <div id="image-formset">
             {{ formset.management_form }}
             {% for form in formset %}
-
                 <div class="form-row">
                     {{ form.image_path.label_tag }} {{ form.image_path }}
-                    <a href="#" class="remove-form-row">Remove</a>
+                    <a href="#" class="remove-form-row">{% trans "Remove" %}</a>
                 </div>
             {% endfor %}
         </div>
 
-        <button type="button" id="add-form-row">Add Image</button>
-        <button type="submit" class="btn btn-success" >Save Article</button>
+        <button type="button" id="add-form-row">{% trans "Add image" %}</button>
+        <button type="submit" class="btn btn-success" >{% trans "Save poster" %}</button>
     </form>
 </div>
 

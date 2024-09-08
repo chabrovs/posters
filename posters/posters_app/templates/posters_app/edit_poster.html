@@ -1,8 +1,8 @@
 <!-- edit_poster.html -->
 
 {% extends 'posters_base.html' %}
-
-{% block title %} Edit Poster {% endblock %}
+{% load i18n %}
+{% block title %} {% trans "Edit poster" %} {% endblock %}
 
 {% block content %}
 {% load crispy_forms_tags %}
@@ -12,7 +12,7 @@
 
 {% comment %} BUG: Django debugtoolbar does not have access to its styles and js on this page. {% endcomment %}
 <div class="container">
-    <h1>Edit Poster</h1>
+    <h1>{% trans "Edit poster" %}</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form|crispy}}
@@ -31,8 +31,8 @@
             {% endfor %}
         </div> {% endcomment %}
     
-        <button type="button" id="add-form-row">Add Image</button>
-        <button type="submit">Save Changes</button>
+        <button type="button" id="add-form-row">{% trans "Add image" %}</button>
+        <button type="submit">{% trans "Save changes" %}</button>
     </form>
 </div>
 

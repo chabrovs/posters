@@ -1,6 +1,6 @@
 {% extends 'posters_base.html' %}
-
-{% block title %} Poster info  {% endblock %}
+{% load i18n %}
+{% block title %} {% trans "Poster info" %}  {% endblock %}
 
 {% block content %}
 {% load static %}
@@ -23,13 +23,13 @@
 <div class="container">
     {% if poster.owner == user %}
     <div class="panel panel-info">
-        <div class="panel-heading">Manage your poster</div>
+        <div class="panel-heading"><p>{% trans "Manage your poster" %}</p></div>
         <div class="panel-body">
             <form action="{% url 'posters_app:delete_poster_by_id' poster_id=poster.id %}" method="post" style="display:inline;">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this poster?');">Delete Poster</button>
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this poster?');"> {% trans "Delete Poster" %}</button>
             </form>
-            <button type="button" class="btn btn-primary"><a style="color: white;" href="{% url 'posters_app:edit_poster' poster.id %}">Edit poster </a></button>    
+            <button type="button" class="btn btn-primary"><a style="color: white;" href="{% url 'posters_app:edit_poster' poster.id %}">{% trans "Edit poster" %} </a></button>    
         </div>
     </div>
     {% endif %}
@@ -106,18 +106,18 @@
     </div> {% endcomment %}
 
     <div class="container">
-        <h3>Description</h3>
+        <h3>{% trans "Description" %}</h3>
         <p>{{ poster.description }}</p>
     </div>
     <div class="container">
-        <h3>contact information</h3>
+        <h3>{% trans "Contact information" %}</h3>
         <ul>
             <li> <i class="fa fa-phone" aria-hidden="true"></i> {{ poster.phone_number }}</li>
             <li> <i class="fa fa-envelope-o" aria-hidden="true"></i> {{ poster.email }}</li>
         </ul>
     </div>
     <div class="container"> 
-        <h5>See other posts in this category</h5>
+        <h5>{% trans "See other posters in this category" %}</h5>
         <a href="{% url 'posters_app:list_posters_in_category' poster.category %}"> {{ poster.category }} </a>
     </div>
 </div>

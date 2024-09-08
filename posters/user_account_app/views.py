@@ -12,10 +12,17 @@ from django.contrib.auth import logout, login
 from .forms import EmailLogInForm, EmailLogInCodeVerificationForm
 from .business_logic.auth_logic import Auth
 import logging
-
+from django.utils import translation
 
 logger = logging.getLogger(__name__)
 # Create your views here.
+
+
+def set_language(request):
+    user_language = request.GET.get('language', 'en')
+    translation.activate(user_language)
+    request.session[translation.LANGUAGE_SESSION_KEY] = user_language
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 @login_required

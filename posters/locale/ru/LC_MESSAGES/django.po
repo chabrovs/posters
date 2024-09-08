@@ -1,0 +1,189 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-08 13:36+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: posters_app/templates/posters_app/categories.html:3
+#: posters_app/templates/posters_app/category.html:3
+#: templates/posters_base.html:28
+msgid "Categories"
+msgstr "Категории"
+
+#: posters_app/templates/posters_app/categories.html:11
+msgid "Categories:"
+msgstr "Категории:"
+
+#: posters_app/templates/posters_app/category.html:11
+msgid "All posters:"
+msgstr "Все объявления"
+
+#: posters_app/templates/posters_app/category.html:18
+msgid "About poster"
+msgstr "Подробнее"
+
+#: posters_app/templates/posters_app/create_poster.html:3
+#: templates/posters_base.html:29
+msgid "Create poster"
+msgstr "Создать"
+
+#: posters_app/templates/posters_app/create_poster.html:12
+msgid "Create new poster"
+msgstr "Создать"
+
+#: posters_app/templates/posters_app/create_poster.html:23
+msgid "Remove"
+msgstr "Удалить"
+
+#: posters_app/templates/posters_app/create_poster.html:28
+#: posters_app/templates/posters_app/edit_poster.html:37
+msgid "Add image"
+msgstr "Добавить изображение"
+
+#: posters_app/templates/posters_app/create_poster.html:29
+msgid "Save poster"
+msgstr "Создать"
+
+#: posters_app/templates/posters_app/edit_poster.html:5
+#: posters_app/templates/posters_app/edit_poster.html:16
+#: posters_app/templates/posters_app/poster.html:33
+msgid "Edit poster"
+msgstr "Редактировать"
+
+#: posters_app/templates/posters_app/edit_poster.html:38
+msgid "Save changes"
+msgstr "Сохранить изменения"
+
+#: posters_app/templates/posters_app/index.html:3
+#, fuzzy
+#| msgid "Create poster"
+msgid "Posters"
+msgstr "Создать"
+
+#: posters_app/templates/posters_app/index.html:13
+msgid "Search posters"
+msgstr "Искать объявления"
+
+#: posters_app/templates/posters_app/index.html:17
+msgid "Search"
+msgstr "Поиск"
+
+#: posters_app/templates/posters_app/poster.html:3
+msgid "Poster info"
+msgstr "Подробнее"
+
+#: posters_app/templates/posters_app/poster.html:27
+msgid "Manage your poster"
+msgstr "Управление объявлением"
+
+#: posters_app/templates/posters_app/poster.html:31
+msgid "Delete Poster"
+msgstr "Удалить объявление"
+
+#: posters_app/templates/posters_app/poster.html:114
+msgid "Description"
+msgstr "Описание"
+
+#: posters_app/templates/posters_app/poster.html:118
+msgid "Contact information"
+msgstr "Контактная информация"
+
+#: posters_app/templates/posters_app/poster.html:125
+msgid "See other posters in this category"
+msgstr "Смотреть другие объявления в этой категории"
+
+#: templates/posters_base.html:27
+msgid "Home"
+msgstr "Главная"
+
+#: templates/posters_base.html:31
+msgid "Languages"
+msgstr "Язык"
+
+#: templates/posters_base.html:48
+msgid "Profile"
+msgstr "Аккаунт"
+
+#: templates/posters_base.html:52
+#: user_account_app/templates/user_account_app/user_account_email_login.html:4
+msgid "LogIn"
+msgstr "Войти"
+
+#: user_account_app/templates/user_account_app/user_account_edit.html:3
+#: user_account_app/templates/user_account_app/user_account_edit.html:11
+#: user_account_app/templates/user_account_app/user_account_view.html:31
+msgid "Edit profile"
+msgstr "Редактировать аккаунт"
+
+#: user_account_app/templates/user_account_app/user_account_edit.html:15
+msgid "Update profile"
+msgstr "Обновить"
+
+#: user_account_app/templates/user_account_app/user_account_edit.html:16
+msgid "back to profile"
+msgstr "Назад к аккаунту"
+
+#: user_account_app/templates/user_account_app/user_account_edit.html:16
+msgid "Go back"
+msgstr "Вернуться"
+
+#: user_account_app/templates/user_account_app/user_account_email_login.html:13
+msgid "LogIn by email."
+msgstr "Вход по Email"
+
+#: user_account_app/templates/user_account_app/user_account_email_login.html:17
+msgid "get code"
+msgstr "Получить код"
+
+#: user_account_app/templates/user_account_app/user_account_email_login_verification.html:3
+msgid "Code confirmation"
+msgstr "Подтверждение кода"
+
+#: user_account_app/templates/user_account_app/user_account_email_login_verification.html:12
+msgid "Verify code"
+msgstr "Подтвердить код"
+
+#: user_account_app/templates/user_account_app/user_account_email_login_verification.html:16
+msgid "Enter"
+msgstr "Войти"
+
+#: user_account_app/templates/user_account_app/user_account_view.html:13
+msgid "Hello"
+msgstr "Здравствуйте"
+
+#: user_account_app/templates/user_account_app/user_account_view.html:14
+
+msgid "Account information: "
+msgstr "О аккаунте:"
+
+#: user_account_app/templates/user_account_app/user_account_view.html:28
+msgid "LogOut"
+msgstr "Выйти"
+
+#: user_account_app/templates/user_account_app/user_account_view.html:31
+msgid "Edit"
+msgstr "Редактировать"
+
+#: user_account_app/templates/user_account_app/user_account_view.html:35
+msgid "Deactivate"
+msgstr "Деактивировать"
+
+#: user_account_app/templates/user_account_app/user_account_view.html:40
+msgid "Delete"
+msgstr "Удалить"

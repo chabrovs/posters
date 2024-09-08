@@ -1,5 +1,6 @@
 {% extends 'posters_base.html' %}
-{% block title %} Categories {% endblock %}
+{% load i18n %}
+{% block title %} {% trans "Categories" %} {% endblock %}
 
 {% block content %}
 {% load static %}
@@ -7,14 +8,14 @@
 <script src="{% static 'posters_app/js/category.js'%}" type="text/javascript"></script>
 
 <div class="container">
-    <h1>All items:</h1>
+    <h1>{% trans "All posters:" %}</h1>
     <ul class="list-group">
         {% for poster in posters %}
         <li class="list-group-item">
             <div class="container-fluid">
                 <h3 id="posterHeader"> {{ poster.header }} </h3>
                 <h4>Poster id: {{ poster.id }}</h4>
-                <a href="{% url 'posters_app:poster_view' poster.id %}"> About Poster </a>
+                <a href="{% url 'posters_app:poster_view' poster.id %}">{% trans "About poster" %}</a>
                 <p id="posterDescription"> {{ poster.formatted_created }} </p>
                 <p id="posterPrice"> {{ poster.price_rounded }} </p>
                 <p id="posterCurrnecy"> {{ poster.currency }} </p>

@@ -1,5 +1,5 @@
 {% extends 'posters_base.html' %}
-
+{% load i18n %}
 {% block title %} {{ user.username }} {% endblock %}
 
 {% block content %}
@@ -10,8 +10,8 @@
 
 <div class="container">
     <div class="container">
-        <h2>Hello {{ user }} </h2>
-        <h4>Account information: </h4>
+        <h2>{%trans "Hello" %} {{ user.first_name }} </h2>
+        <h4>{% trans "Account information: " %}</h4>
         <ul>
         {% for key, value in user_fields %}
             <li> <p> <b>{{ key|capfirst }}</b> | {{ value }}</p>  </li>
@@ -25,21 +25,20 @@
         <div class="panel-body">
             <form method="post" action="{% url 'user_account_app:user_logout' %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-danger">Logout</button>
+                <button type="submit" class="btn btn-danger">{%trans "LogOut" %}</button>
             </form>
     
-            <p>Edit profile <a href="{% url 'user_account_app:user_profile_edit' %}">Edit</a> </p>
+            <p>{% trans "Edit profile" %} <a href="{% url 'user_account_app:user_profile_edit' %}">{% trans "Edit" %}</a> </p>
 
             <form method="post" action="{% url 'user_account_app:deactivate_user_account' %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-warning" onclick="return confirm('Are you sure you want to delete this poster?');">Deactivate</button>
+                <button type="submit" class="btn btn-warning" onclick="return confirm('Are you sure you want to delete this poster?');">{%trans "Deactivate" %}</button>
             </form>
 
             <form method="post" action="{% url 'user_account_app:delete_user_account' %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this poster?');";>Delete</button>
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this poster?');";>{% trans "Delete" %}</button>
             </form>
-
         </div>
       </div>
 </div>
