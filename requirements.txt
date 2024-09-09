@@ -4,7 +4,7 @@ django-debug-toolbar
 django-crispy-forms
 django-extensions
 django-redis
-
+djano-rossetta==0.10.0
 # For Django applications
 phonenumbers
 celery
@@ -19,3 +19,4 @@ Pillow
 python-dotenv
 psycopg2-binary
 autopep8
+django-recaptcha==4.0.0

@@ -3,17 +3,18 @@ from django.forms import inlineformset_factory, modelformset_factory
 from .models import Poster, PosterImages
 
 class CreatePosterForm(forms.ModelForm):
-    #BUG: price requires 9 digits in total and 4 digits before point ???
     class Meta:
         model = Poster
         fields = ['header', 'description', 'phone_number', 'email', 'category', 'price', 'currency']
 
 
-class PosterImagesForm(forms.ModelForm):
+class PosterImageForm(forms.ModelForm):
+    # poster_id = forms.CharField(widget=forms.HiddenInput())
     class Meta:
-        fields = ['id', 'image_path',]
+        model = PosterImages
+        fields = ['image_path']
 
-
+# Creating a poster add images.
 PosterImageFormSet = inlineformset_factory(
     Poster, PosterImages,
     fields=('image_path', ),
@@ -22,20 +23,13 @@ PosterImageFormSet = inlineformset_factory(
     can_delete=True # Allow users delete images.
 )
 
-# EditPosterImageFormSet = inlineformset_factory(
-#     Poster,  # Parent model
-#     PosterImages,  # Child model
-#     # form=PosterImagesForm,  # Form to use for the child model
-#     fields=('id', 'image_path'),  # Fields to include in the form
-#     can_delete=True,  # Allow users to delete images
-#     extra=0
-# )
 EditPosterImageFormSet = modelformset_factory(
     PosterImages,
-    form = PosterImagesForm,
-    extra = 0, # Show only existing images by default
-    can_delete=True
+    form=PosterImageForm,
+    extra=0,  # Number of empty forms to display for new images
+    can_delete=True  # This allows users to delete images
 )
+
 
 class EditPosterForm(forms.ModelForm):
     class Meta:

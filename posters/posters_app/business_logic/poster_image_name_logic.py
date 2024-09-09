@@ -2,9 +2,10 @@ import uuid
 from django.core.exceptions import ValidationError
 from django.utils.deconstruct import deconstructible
 import os
-
+from django.conf import settings
 
 DEFAULT_IMAGE = "poster_images/default_image.jpg"
+DEFAULT_IMAGE_FULL_PATH = os.path.join(settings.MEDIA_ROOT, DEFAULT_IMAGE)
 
 #region: EXCEPTIONS
 class SetUniqueImageNameException(Exception):
