@@ -55,6 +55,11 @@ class Poster(models.Model):
     
     def save(self, *args, **kwargs):
         self.phone_number = standardize_phone_number(self.phone_number)
+
+        #NOTE: Unable to create new posters, when this code is enabled !. <devbackend_09_09_tech_loan>.
+        # if not self.porter_images.exists():
+        #     PosterImages.objects.create(poster_id=self, image_path=DEFAULT_IMAGE)
+
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):

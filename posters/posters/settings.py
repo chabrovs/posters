@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'email_service',
     'django_celery_results',
     'django_celery_beat',
+    'rosetta',
 
 ]
 

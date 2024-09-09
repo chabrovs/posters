@@ -8,6 +8,14 @@
 <script src="{% static 'posters_app/js/category.js'%}" type="text/javascript"></script>
 
 <div class="container">
+    <div class="container-fluid" id="search-bar">
+        <h4>{% trans "Search posters" %}</h4>
+        <form method="get" action="{% url 'posters_app:list_posters_in_category' category_name %}">
+            {{ form.query.label_tag }}
+            {{ form.query }}
+            <button type="submit">{% trans "Search" %}</button>
+        </form>
+    </div>
     <h1>{% trans "All posters:" %}</h1>
     <ul class="list-group">
         {% for poster in posters %}

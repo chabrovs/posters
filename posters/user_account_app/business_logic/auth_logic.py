@@ -6,13 +6,14 @@ from abc import ABC, abstractmethod
 from email_service.tasks import send_verification_code_task
 
 
-# class SingletonMeta(type):
-#     _instances = {}
+class SingletonABC(ABC):
+    _instances = {}
 
-#     def __call__(cls, *args, **kwargs):
-#         if not cls._instance:
-#             cls._instance[cls] = super().__call__(*args, **kwargs)
-#         return cls._instance
+    def __new__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            instance = super().__new__(cls)
+            cls._instances[cls] = instance
+        return cls._instances[cls]
 
 
 class CodeGenerator(ABC):
@@ -34,7 +35,7 @@ class LateralGenerator(CodeGenerator):
         raise NotImplementedError("Use UUIDGenerator class for now!")
 
 
-class VerificationEntryHandler(ABC):
+class VerificationEntryHandler(SingletonABC):
     """
     Verification entry is a key value pair where the key is a credential data,
     (e.g. user's email address, phone number, etc.) and the value is a generated secret code.
@@ -148,16 +149,21 @@ class EmailVerification(VerificationCodeSender):
 
 
 class VerificationFactory:
+    _instances = {}
+
     @staticmethod
     def get_method(method: str) -> VerificationCodeSender:
-        match method:
-            case 'email':
-                return EmailVerification(
-                    UUIDGenerator(),
-                    RedisVerificationEntryHandler(redis_url="redis://localhost:6379/2"))
-            case _:
-                raise ValueError(
-                    f"Verification method ({method}) is not supported!")
+        if method not in VerificationFactory._instances:
+            match method:
+                case 'email':
+                    VerificationFactory._instances['email'] = EmailVerification(
+                        UUIDGenerator(),
+                        RedisVerificationEntryHandler(redis_url="redis://localhost:6379/2"))
+                case _:
+                    raise ValueError(
+                        f"Verification method ({method}) is not supported!")
+                
+        return VerificationFactory._instances[method]
 
 
 class Auth:
