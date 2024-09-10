@@ -1,0 +1,109 @@
+version: "3.8"
+
+services:
+  django_gunicorn:
+    build: .
+    container_name: django_gunicorn
+    command: gunicorn posters.wsgi:application --bind 0.0.0.0:8000
+    volumes: 
+      - .:/posters
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - pgdb
+      - redis
+      - rabbitmq:
+          condition: service_healthy
+    networks:
+      - internal
+
+  celery_worker:
+    build: .
+    container_name: celery_worker
+    command: celery --app posters worker -l info
+    volumes:
+      - .:/posters
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - internal
+
+  celery_beat:
+    build: .
+    container_name: celery_beat
+    command: celery --app posters beat
+    volumes:
+      - .:/posters
+    networks:
+      - internal
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  celery_flower:
+    build: .
+    container_name: celery_flower
+    command: celery --app posters flower
+    volumes:
+      - .:/posters
+    ports:
+      - "5555:5555"
+    networks:
+      - internal
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  rabbitmq:
+    image: "rabbitmq:management"
+    container_name: rabbitmq
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/mnesia
+      # Mount config if needed: - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      # Mount SSL sertificates if needed: ./path_to_certs:/etc/rabbitmq/certs
+    ports:
+      - "5672:5672"
+      - "15672:15672" # Do not forget to restrict by NFTables ! or use NGINX for reversing.
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "rabbitmqcli", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal
+
+  pgdb:
+    image: postgres
+    container_name: pgdb
+    env_file:
+      - .env
+    volumes:
+      - pgdb_data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    env_file:
+      - .env
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - internal
+    
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  rabbitmq_data:
+  pgdb_data:
+  redis_data:

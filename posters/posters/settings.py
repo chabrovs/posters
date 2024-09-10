@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '[::1]']
 
 
 # Application definition
@@ -101,7 +101,7 @@ TEMPLATES = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv("REDIS_LOCATION"),
+        "LOCATION": f'{os.getenv("REDIS_LOCATION")}/0',
         "OPTIONS": {
             'db': '0',
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
@@ -119,11 +119,11 @@ WSGI_APPLICATION = 'posters.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("POSTGRESQL_DATABASE_NAME"),
-        'USER': os.getenv("POSTGRESQL_USER"),
-        'PASSWORD': os.getenv("POSTGRESQL_PASSWORD"),
-        'HOST': os.getenv("POSTGRESQL_HOST"),
-        'PORT': os.getenv("POSTGRESQL_PORT"),
+        'NAME': os.getenv("POSTGRES_DB"),
+        'USER': os.getenv("POSTGRES_USER"),
+        'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
+        'HOST': os.getenv("POSTGRES_HOST"),
+        'PORT': os.getenv("POSTGRES_PORT"),
     }
 }
 
@@ -165,13 +165,15 @@ LOCALE_PATHS = [os.path.join(BASE_DIR, 'locale')]
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 # region: DEVELOPMENT MEDIA and STATICS
-STATIC_URL = 'static/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
+if DEBUG:
+    STATIC_URL = 'static/'
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static'
+    ]
 
 # endregion
 
@@ -181,7 +183,7 @@ if not DEBUG:
     MEDIA_URL = '/media/'
 
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-    STATIC_ROOT = ''
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # endregion
 
 
