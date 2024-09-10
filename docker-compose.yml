@@ -12,10 +12,12 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - pgdb
-      - redis
-      - rabbitmq:
-          condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      pgdb:
+        condition: service_started
+      redis:
+        condition: service_started
     networks:
       - internal
 
