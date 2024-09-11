@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '[::1]']
+ALLOWED_HOSTS = ['127.0.0.1', '[::1]', '95.221.162.245']
 
 
 # Application definition
@@ -103,7 +103,6 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": f'{os.getenv("REDIS_LOCATION")}/0',
         "OPTIONS": {
-            'db': '0',
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
@@ -171,26 +170,44 @@ if DEBUG:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-    STATICFILES_DIRS = [
-        BASE_DIR / 'static'
-    ]
+    # Remove later
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+    # Uncomment later
+    # STATICFILES_DIRS = [
+    #     BASE_DIR / 'static'
+    # ]
 
 # endregion
 
 # region: PRODUCTION MEDIA and STATICS
+
 if not DEBUG:
     STATIC_URL = 'static/'
     MEDIA_URL = '/media/'
 
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 # endregion
 
 
 # SESSION SETTINGS
 
 SESSION_EXPIRE_ON_BROWSER_CLOSE = False
-# SESSION_COOKIE_SECURE = True  # Use True if your site uses HTTPS
+
+
+#region: Django SECURITY FOR PRODUCTION
+
+# SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
+# SESSION_COOKIE_SECURE = True  # Cookies via HTTPS
+# CSRF_COOKIE_SECURE = True     # Secure CSRF cookies
+# SECURE_HSTS_SECONDS = 3600    # Use HTTP Strict Transport Security (HSTS)
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Recognize HTTPS from NGINX
+
+#endregion
 
 
 # Default primary key field type

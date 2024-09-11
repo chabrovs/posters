@@ -171,3 +171,8 @@ media/
 
 # Helper scripts
 *.sh
+
+# Production configs
+nginx.conf
+redis.conf
+rabbitmq.conf

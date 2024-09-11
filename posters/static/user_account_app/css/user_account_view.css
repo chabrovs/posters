@@ -1,0 +1,11 @@
+div.container div.panel.panel-info div.panel-body {
+    display: flex;
+    overflow: auto;
+}
+div.container div.panel.panel-info div.panel-body :is(form, p) {
+    padding: 10px;
+}
+
+div.container div.container ul li p {
+    overflow-wrap: anywhere;
+}
