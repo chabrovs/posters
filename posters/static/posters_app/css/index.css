@@ -1,0 +1,51 @@
+h1 {
+    color: aqua;
+}
+
+img {
+    max-height: 100px;
+    max-width: 200px;
+}
+div.container {
+    text-align: center;
+}
+div.container div#search-bar{
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+div.container div#main-grid div.col-md-4{
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    /* .col-md-4: 10%; */
+}
+
+div.container div#main-grid div.col-md-4 div.thumbnail h4 {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+} 
+/* div.container div.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+div.container span.step-links {
+    display: inline-block;
+}
+
+div.container span.step-links a {
+    color: #007bff;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+div.container span.step-links a:hover {
+    text-decoration: underline;
+}
+
+div.container div.current {
+    margin: 0 5px;
+} */

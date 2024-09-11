@@ -4,6 +4,7 @@ from django.conf import settings
 from typing_extensions import Any
 from abc import ABC, abstractmethod
 from email_service.tasks import send_verification_code_task
+import os
 
 
 class SingletonABC(ABC):
@@ -158,7 +159,7 @@ class VerificationFactory:
                 case 'email':
                     VerificationFactory._instances['email'] = EmailVerification(
                         UUIDGenerator(),
-                        RedisVerificationEntryHandler(redis_url="redis://localhost:6379/2"))
+                        RedisVerificationEntryHandler(redis_url=f'{os.getenv("REDIS_LOCATION")}/2'))
                 case _:
                     raise ValueError(
                         f"Verification method ({method}) is not supported!")

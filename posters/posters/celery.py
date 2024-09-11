@@ -6,7 +6,8 @@ from celery import Celery
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'posters.settings')
 
 # Create an app instance
-app = Celery('posters', broker='amqp://guest:guest@localhost//')
+# app = Celery('posters', broker='amqp://guest:guest@localhost//')
+app = Celery('posters',)
 
 
 # Django-celery-beat scheduler
