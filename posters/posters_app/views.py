@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView, CreateView, ListView
 from .models import Poster, PosterImages, User, PosterCategories
 from django.contrib.postgres.aggregates import ArrayAgg
-from .business_logic.view_logic import FormatTimestamp, RoundDecimal, F
+from .business_logic.view_logic import FormatTimestamp, RoundDecimal, F, FrequentQueries
 from .business_logic.poster_image_name_logic import DEFAULT_IMAGE, DEFAULT_IMAGE_FULL_PATH
 from django.urls import reverse, reverse_lazy
 from .forms import CreatePosterForm, PosterImageFormSet, EditPosterForm, SearchForm, EditPosterImageFormSet
@@ -22,28 +22,19 @@ from django.utils.translation import gettext as _
 
 # Create your views here.
 # CACHE VARIABLES
-RECOMMENDED_POSTERS_CACHE_KEY = 'recommended_posters_cached'
-CATEGORIES_CACHE_KEY = 'categories_cached'
+from .constants import (
+    RECOMMENDED_POSTERS_CACHE_KEY,
+    CATEGORIES_CACHE_KEY
+)
 
 
 class HomePageView(TemplateView):
     template_name = 'posters_app/index.html'
 
     def __init__(self, **kwargs: Any) -> None:
-
-        # Cache
-        self.recommended_posters = cache.get(RECOMMENDED_POSTERS_CACHE_KEY)
-
-        if not self.recommended_posters:
-            self.recommended_posters = self.recommended_posters = Poster.objects.annotate(
-                image_ids=ArrayAgg('porter_images__id'),
-                formatted_created=FormatTimestamp(
-                    'created', format_style='YYYY-MM-DD HH24:MI'),
-                price_rounded=RoundDecimal('price', decimal_places=2)
-            )
-            cache.set(RECOMMENDED_POSTERS_CACHE_KEY,
-                      self.recommended_posters, timeout=60*3)
-
+        self.recommended_posters = FrequentQueries.get_recommended_posters(
+            cache_timeout=60 * 3
+        )
         super().__init__(**kwargs)
 
     def get_page(self, queryset: QuerySet, chunk_size: int, page_number: int) -> Page:
@@ -172,13 +163,10 @@ class PosterView(TemplateView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         poster_id = kwargs.get('poster_id')
-        poster = Poster.objects.filter(id=poster_id, status=True).annotate(
-            image_ids=ArrayAgg('porter_images__id'),
-            formatted_created=FormatTimestamp(
-                'created', format_style='YYYY-MM-DD HH24:MI'),
-            price_rounded=RoundDecimal('price', decimal_places=2),
-            category_name=F('category__name')
-        ).first()
+        poster = FrequentQueries.get_active_poster(
+            poster_id=poster_id,
+            cache_enabled=False
+        )
         context['poster'] = poster
         context['user'] = self.request.user
         return context
