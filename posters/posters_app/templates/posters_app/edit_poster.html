@@ -25,11 +25,7 @@
         <div class="formset-images">
             {% for form in formset %}
                 <div class="image-form">
-                    {{ form.as_p }}
-                    {% if form.instance.pk %}
-                        <label for="id_form-{{ forloop.counter0 }}-DELETE">Delete?</label>
-                        {{ form.DELETE }}
-                    {% endif %}
+                    {{ form|crispy }}
                     <button type="button" class="remove-image">Remove</button>
                 </div>
             {% endfor %}

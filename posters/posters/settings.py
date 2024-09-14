@@ -171,12 +171,12 @@ if DEBUG:
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
     # Remove later
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
     # Uncomment later
-    # STATICFILES_DIRS = [
-    #     BASE_DIR / 'static'
-    # ]
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static'
+    ]
 
 # endregion
 

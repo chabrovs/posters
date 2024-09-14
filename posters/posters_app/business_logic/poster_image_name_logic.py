@@ -4,8 +4,10 @@ from django.utils.deconstruct import deconstructible
 import os
 from django.conf import settings
 
+
 DEFAULT_IMAGE = "poster_images/default_image.jpg"
 DEFAULT_IMAGE_FULL_PATH = os.path.join(settings.MEDIA_ROOT, DEFAULT_IMAGE)
+
 
 #region: EXCEPTIONS
 class SetUniqueImageNameException(Exception):
@@ -30,7 +32,6 @@ class GetUniqueImageName:
     def __call__(self, instance, image_filename: str | None) -> str:
         """
         Makes a unique filename for user uploaded images.
-        (#NOTE: Alter this exception before production. The exception must not the cause the app crush).
         :Param instance: Instance of an Image.
         :Param image_name: The name of an image user uploaded.
         """

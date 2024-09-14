@@ -1,23 +1,22 @@
 from typing_extensions import Any, Generator
 from django.db.models.query import QuerySet
 from django.db.models import Count, Q
-from django.shortcuts import render
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView, CreateView, ListView
-from .models import Poster, PosterImages, User, PosterCategories
+from .models import Poster, PosterImages, PosterCategories
 from django.contrib.postgres.aggregates import ArrayAgg
 from .business_logic.view_logic import FormatTimestamp, RoundDecimal, F, FrequentQueries
-from .business_logic.poster_image_name_logic import DEFAULT_IMAGE, DEFAULT_IMAGE_FULL_PATH
+from .business_logic.process_images_logic import (
+    get_image_by_image_id_response,
+    get_image_by_image_path_response, process_formset_with_images_for_model)
 from django.urls import reverse, reverse_lazy
 from .forms import CreatePosterForm, PosterImageFormSet, EditPosterForm, SearchForm, EditPosterImageFormSet
 from django.core.cache import cache
 from django.views.decorators.cache import never_cache, cache_control
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, Page
 from django.core.cache import cache
-import io
 from django.utils.translation import gettext as _
 
 # Create your views here.
@@ -129,7 +128,7 @@ class CategoryView(ListView):
 
         category_name = self.kwargs.get('category_name')
         queryset = Poster.objects.filter(category__name=category_name).annotate(
-            image_ids=ArrayAgg('porter_images__id'),
+            image_ids=ArrayAgg('poster_images__id'),
             formatted_created=FormatTimestamp(
                 'created', format_style='YYYY-MM-DD HH24:MI'),
             price_rounded=RoundDecimal('price', decimal_places=2)
@@ -140,7 +139,11 @@ class CategoryView(ListView):
         return self.apply_search_filter(queryset, search_query)
 
     def apply_search_filter(self, queryset: QuerySet, query: str | None) -> QuerySet:
-        """Filter posters by search query (if provided)."""
+        """
+        Filter posters by search query (if provided).
+        :Param queryset: A queryset filters are applied on.
+        :Param query: A string containing words that are used as filter for the queryset param.
+        """
 
         if query:
             return queryset.filter(
@@ -182,7 +185,7 @@ class UserPostersView(TemplateView):
         poster_id = kwargs.get('poster_id')
         user_id = kwargs.get('user_id')
         user_poster = Poster.objects.filter(id=poster_id, status=True, user_id=user_id).annotate(
-            image_ids=ArrayAgg('porter_images__id'),
+            image_ids=ArrayAgg('poster_images__id'),
             formatted_created=FormatTimestamp(
                 'created', format_style='YYYY-MM-DD HH24:MI'),
             price_rounded=RoundDecimal('price', decimal_places=2),
@@ -199,22 +202,16 @@ def create_poster(request):
         form = CreatePosterForm(request.POST)
         formset = PosterImageFormSet(request.POST, request.FILES)
         if form.is_valid() and formset.is_valid():
-            poster = form.save(commit=False)  # Do not save to the database yet
-            poster.owner = request.user       # Set the owner to the currently logged-in user
+            poster = form.save(commit=False)  
+            poster.owner = request.user
             poster.save()
 
-            for image_form in formset:
-                # Only save forms that have data (i.e., an image was uploaded)
-                if image_form.cleaned_data:
-                    # Create an instance but don't save to the database yet
-                    image = image_form.save(commit=False)
-                    # Assign the poster instance to the image
-                    image.poster_id = poster
-                    # Now save the image instance to the database
-                    image.save()
-                else:
-                    image = PosterImages.objects.create(poster_id=poster)
-                    image.save()
+            process_formset_with_images_for_model(
+                formset=formset,
+                instance=poster,
+                related_field='poster_images',
+                image_model=PosterImages
+            )
 
             # Cache validation
             cache.delete(RECOMMENDED_POSTERS_CACHE_KEY)
@@ -260,7 +257,7 @@ def edit_poster(request, poster_id: int):
     poster_images = PosterImages.objects.filter(poster_id=poster)
 
     if poster.owner != request.user:
-        return HttpResponse("Cannot edit someone elses poster!")
+        return HttpResponse("Cannot edit someone else's poster!")
 
     if request.method == 'POST':
         form = EditPosterForm(request.POST, instance=poster)
@@ -273,18 +270,13 @@ def edit_poster(request, poster_id: int):
 
         if form.is_valid() and formset.is_valid():
             form.save()
-            images = formset.save(commit=False)
-            for image in images:
-                image.poster_id = poster
-                image.save()
 
-            # Cache validation
-            cache.delete(RECOMMENDED_POSTERS_CACHE_KEY)
-
-            # In case user deletes all images, upload the default one.
-            if not poster.porter_images.exists():
-                PosterImages.objects.create(
-                    poster_id=poster, image_path=DEFAULT_IMAGE_FULL_PATH)
+            process_formset_with_images_for_model(
+                formset=formset,
+                instance=poster,
+                related_field='poster_images',
+                image_model=PosterImages
+            )
 
             return redirect(success_url)
         else:
@@ -299,39 +291,8 @@ def edit_poster(request, poster_id: int):
 
 @cache_control(max_age=15)
 def get_image_by_image_id(request, image_id: int | None):
-    try:
-        if image_id is None:
-            image_path = DEFAULT_IMAGE
-        else:
-            image = get_object_or_404(PosterImages, id=image_id)
-            image_path = image.image_path.path
-        image_file_cache_key = f'image_by_id={image_path}'
-
-        # Caching
-        image_file_data = cache.get(image_file_cache_key)
-        if not image_file_data:
-            with open(image_path, 'rb') as image_file:
-                image_file_data = image_file.read()
-            cache.set(image_file_cache_key, image_file_data, 60*3)
-
-        return FileResponse(io.BytesIO(image_file_data), content_type='image/jpeg')
-    except PosterImages.DoesNotExist:
-        with open(DEFAULT_IMAGE_FULL_PATH, 'rb') as default_image_file:
-            image_file_data = default_image_file.read()
-        return FileResponse(io.BytesIO(image_file_data), content_type='image/jpeg')
-    except Exception as e:
-        with open(DEFAULT_IMAGE_FULL_PATH, 'rb') as default_image_file:
-            image_file_data = default_image_file.read()
-        return FileResponse(io.BytesIO(image_file_data), content_type='image/jpeg')
-        # raise Http404(f"Error loading Image {str(e)}")
+    return get_image_by_image_id_response(image_id)
 
 
 def get_image_by_image_path(request, image_path):
-    try:
-        image = get_object_or_404(PosterImages, image_path=image_path)
-        file_path = image.image_path.path
-        return FileResponse(open(file_path, 'rb'))
-    except PosterImages.DoesNotExist:
-        return Http404("Image does not exist!")
-    except Exception as e:
-        raise Http404(f"Error loading Image {str(e)}")
+    return get_image_by_image_path_response(image_path)

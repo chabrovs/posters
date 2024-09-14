@@ -54,7 +54,7 @@ class FrequentQueries:
         def fetch_posters() -> QuerySet:
             """Helper function to fetch recommended posters."""
             return Poster.objects.annotate(
-                image_ids=ArrayAgg('porter_images__id'),
+                image_ids=ArrayAgg('poster_images__id'),
                 formatted_created=FormatTimestamp(
                     'created', format_style='YYYY-MM-DD HH24:MI'),
                 price_rounded=RoundDecimal('price', decimal_places=2)
@@ -78,7 +78,7 @@ class FrequentQueries:
 
         def fetch_poster(poster_id=poster_id) -> QuerySet:
             return Poster.objects.filter(id=poster_id, status=True).annotate(
-                image_ids=ArrayAgg('porter_images__id'),
+                image_ids=ArrayAgg('poster_images__id'),
                 formatted_created=FormatTimestamp(
                     'created', format_style='YYYY-MM-DD HH24:MI'),
                 price_rounded=RoundDecimal('price', decimal_places=2),
