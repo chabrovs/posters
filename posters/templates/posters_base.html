@@ -10,11 +10,15 @@
 
     {% load static %}
     {% load i18n %}
+    {% load custom_filters %}
 </head>
 <body>
-    <link rel="stylesheet" href="{% static 'css/posters_base.css' %}">
-    <script src="{% static '/js/posters_base.js' %}" type="text/javascript"></script>
+  <link rel="stylesheet" href="{% static 'css/posters_base.css' %}">
+  <script src="{% static '/js/posters_base.js' %}" type="text/javascript"></script>
 
+
+
+  <div class="wrapper">
     {% block header %}
     <header>
         <nav class="navbar navbar-inverse">
@@ -22,7 +26,6 @@
               <div class="navbar-header">
                 <a class="navbar-brand" href="{% url 'posters_app:home' %}">Posters</a>
             </div>
-
               <ul class="nav navbar-nav">
                 <li class="active"><a href="{% url 'posters_app:home' %}">{% trans "Home" %}</a></li>
                 <li><a href="{% url 'posters_app:categories' %}">{% trans "Categories" %}</a></li>
@@ -54,31 +57,32 @@
             </div>
           </nav>
 
-
-        {% comment %} <div class="topnav">
-            <a href="{% url 'posters_app:home' %}">Posters</a>
-            <a href="{% url 'posters_app:categories' %}">Categories</a>
-            <a class="create-poster" href="{% url 'posters_app:create_poster' %}">Create post</a>
-            {% if user.is_authenticated %}
-                <p class="split" style="color: white;">Logged in as {{ user.username }} </p><a class="split" href="{% url 'user_account_app:view_user_account' %}">Profile</a>
-            {% else %}
-            <a class="split" href="/user_auth/login/">SignIn</a>
-            {% endif %}  
-        </div>      {% endcomment %}
     </header>
+    {% endblock %}
     
-    {% endblock %}
-
-
-    {% block content %}
-    <h1>Poster Project Base HTML Page!</h1>
-    {% endblock %}
-
-
+    <main>
+      {% block content %}
+      <h1>Poster Project Base HTML Page!</h1>
+      {% endblock %}
+    </main>
+    
     {% block footer %}
-    <footer></footer>
+    <footer class="bg-dark text-center text-lg-start text-white">
+      <a href="#">
+        <div class="well well-sm">
+          {% trans "CV" %}
+        </div>
+      </a>
+      <a href="https://github.com/chabrovs/posters">
+        <div class="well well-sm">
+          {% trans "View source code" %}
+        </div>
+      </a>
+    </footer>
     {% endblock %}
- 
+  </div>
+
+
 </body>
 </html>
 

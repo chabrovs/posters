@@ -8,21 +8,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 13:36+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2024-09-13 14:14+0000\n"
+"PO-Revision-Date: 2024-09-13 14:16+0000\n"
+"Last-Translator:   <sergei2001101@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"X-Translated-Using: django-rosetta 0.10.0\n"
 
 #: posters_app/templates/posters_app/categories.html:3
 #: posters_app/templates/posters_app/category.html:3
-#: templates/posters_base.html:28
+#: templates/posters_base.html:30
 msgid "Categories"
 msgstr "Категории"
 
@@ -30,16 +29,26 @@ msgstr "Категории"
 msgid "Categories:"
 msgstr "Категории:"
 
-#: posters_app/templates/posters_app/category.html:11
+#: posters_app/templates/posters_app/category.html:12
+#: posters_app/templates/posters_app/index.html:13
+msgid "Search posters"
+msgstr "Искать объявления"
+
+#: posters_app/templates/posters_app/category.html:16
+#: posters_app/templates/posters_app/index.html:17
+msgid "Search"
+msgstr "Поиск"
+
+#: posters_app/templates/posters_app/category.html:19
 msgid "All posters:"
 msgstr "Все объявления"
 
-#: posters_app/templates/posters_app/category.html:18
+#: posters_app/templates/posters_app/category.html:26
 msgid "About poster"
 msgstr "Подробнее"
 
 #: posters_app/templates/posters_app/create_poster.html:3
-#: templates/posters_base.html:29
+#: templates/posters_base.html:31
 msgid "Create poster"
 msgstr "Создать"
 
@@ -47,26 +56,25 @@ msgstr "Создать"
 msgid "Create new poster"
 msgstr "Создать"
 
-#: posters_app/templates/posters_app/create_poster.html:23
+#: posters_app/templates/posters_app/create_poster.html:22
 msgid "Remove"
 msgstr "Удалить"
 
-#: posters_app/templates/posters_app/create_poster.html:28
-#: posters_app/templates/posters_app/edit_poster.html:37
+#: posters_app/templates/posters_app/create_poster.html:27
 msgid "Add image"
 msgstr "Добавить изображение"
 
-#: posters_app/templates/posters_app/create_poster.html:29
+#: posters_app/templates/posters_app/create_poster.html:28
 msgid "Save poster"
 msgstr "Создать"
 
 #: posters_app/templates/posters_app/edit_poster.html:5
-#: posters_app/templates/posters_app/edit_poster.html:16
+#: posters_app/templates/posters_app/edit_poster.html:15
 #: posters_app/templates/posters_app/poster.html:33
 msgid "Edit poster"
 msgstr "Редактировать"
 
-#: posters_app/templates/posters_app/edit_poster.html:38
+#: posters_app/templates/posters_app/edit_poster.html:40
 msgid "Save changes"
 msgstr "Сохранить изменения"
 
@@ -75,14 +83,6 @@ msgstr "Сохранить изменения"
 #| msgid "Create poster"
 msgid "Posters"
 msgstr "Создать"
-
-#: posters_app/templates/posters_app/index.html:13
-msgid "Search posters"
-msgstr "Искать объявления"
-
-#: posters_app/templates/posters_app/index.html:17
-msgid "Search"
-msgstr "Поиск"
 
 #: posters_app/templates/posters_app/poster.html:3
 msgid "Poster info"
@@ -108,22 +108,30 @@ msgstr "Контактная информация"
 msgid "See other posters in this category"
 msgstr "Смотреть другие объявления в этой категории"
 
-#: templates/posters_base.html:27
+#: templates/posters_base.html:29
 msgid "Home"
 msgstr "Главная"
 
-#: templates/posters_base.html:31
+#: templates/posters_base.html:33
 msgid "Languages"
 msgstr "Язык"
 
-#: templates/posters_base.html:48
+#: templates/posters_base.html:50
 msgid "Profile"
 msgstr "Аккаунт"
 
-#: templates/posters_base.html:52
+#: templates/posters_base.html:54
 #: user_account_app/templates/user_account_app/user_account_email_login.html:4
 msgid "LogIn"
 msgstr "Войти"
+
+#: templates/posters_base.html:73
+msgid "CV"
+msgstr "Резюме"
+
+#: templates/posters_base.html:78
+msgid "View source code"
+msgstr "Смотреть исходный код"
 
 #: user_account_app/templates/user_account_app/user_account_edit.html:3
 #: user_account_app/templates/user_account_app/user_account_edit.html:11
@@ -168,7 +176,6 @@ msgid "Hello"
 msgstr "Здравствуйте"
 
 #: user_account_app/templates/user_account_app/user_account_view.html:14
-
 msgid "Account information: "
 msgstr "О аккаунте:"
 

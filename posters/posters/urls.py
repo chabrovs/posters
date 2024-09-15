@@ -27,8 +27,8 @@ from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
     # NOTE: Uncomment in production!
-    # re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
-    # re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
     path('admin/', admin.site.urls),
     # path('posters/', include(('posters_app.urls', 'posters_app'), namespace='posters_app')),
     # path('user_account/', include(('user_account_app.urls', 'user_account_app'), namespace='user_account_app')),
