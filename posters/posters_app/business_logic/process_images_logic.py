@@ -1,13 +1,18 @@
 from __future__ import annotations
 
+
+import io
+
 from django.forms.models import BaseModelFormSet
-from .poster_image_name_logic import DEFAULT_IMAGE, DEFAULT_IMAGE_FULL_PATH
 from django.shortcuts import get_object_or_404
 from django.http.response import FileResponse
 from django.db import models
-from ..models import PosterImages
 from django.core.cache import cache
-import io
+
+from ..constants import (
+    DEFAULT_IMAGE,
+    DEFAULT_IMAGE_FULL_PATH)
+from ..models import PosterImages
 
 
 def get_default_image_response(default_image_full_path: str = DEFAULT_IMAGE_FULL_PATH, content_type: str = 'image/jpeg') -> FileResponse:

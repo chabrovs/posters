@@ -20,9 +20,14 @@ main {
 }
 
 footer {
-    background-color: rgb(71, 71, 71);
+    background-color: #222222;
     padding: 20px;
     text-align: center;
+}
+
+body > div.wrapper > footer > a > div {
+    border-radius: 1vh;
+    color: black;
 }
 
 #create-poster-link {

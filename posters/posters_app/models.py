@@ -1,17 +1,18 @@
-from django.db import models
 import uuid
 import os
 from decimal import Decimal
+
+from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 from django.db.models import CharField
 
 from .business_logic.phone_number_logic import standardize_phone_number, validate_phone_number
-from .business_logic.poster_image_name_logic import GetUniqueImageName, validate_image_size, DEFAULT_IMAGE, \
-    DEFAULT_IMAGE_FULL_PATH
+from .business_logic.poster_image_name_logic import GetUniqueImageName, validate_image_size
 from .business_logic.poster_currency_logic import validate_currency, CURRENCY_CHOICES
 from .business_logic.posters_lite_logic import get_expire_timestamp
 
+from .constants import DEFAULT_IMAGE, DEFAULT_IMAGE_FULL_PATH
 
 # Create your models here.
 

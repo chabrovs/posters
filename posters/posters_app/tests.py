@@ -1,15 +1,21 @@
+from decimal import Decimal
+import datetime
+
 from django.test import TestCase, SimpleTestCase
-from .business_logic.poster_image_name_logic import GetUniqueImageName, SetUniqueImageNameException, DEFAULT_IMAGE_FULL_PATH
+from posters_app.models import Poster, PosterCategories, PosterImages, PosterLite, PosterLiteImages
+from django.contrib.auth.models import User
+from django.contrib.sessions.models import Session
+from django.utils import timezone
+
+from .business_logic.poster_image_name_logic import GetUniqueImageName
 from .business_logic.phone_number_logic import standardize_phone_number
 from .business_logic.poster_currency_logic import validate_currency, ValidationError
 from .business_logic.posters_lite_logic import get_expire_timestamp, POSTERLITE_LIFETIME
 from .business_logic.process_images_logic import ensure_image_exists, get_fk_field_name, get_fk_field_name
-from posters_app.models import Poster, PosterCategories, PosterImages, PosterLite, PosterLiteImages
-from django.contrib.auth.models import User
-from django.contrib.sessions.models import Session
-from decimal import Decimal
-import datetime
-from django.utils import timezone
+from .business_logic.view_logic import SearchQueryEngine
+
+
+from .constants import DEFAULT_IMAGE_FULL_PATH
 
 # Create your tests here.
 
@@ -302,3 +308,94 @@ class TestImageProcessLogic(TestCase):
         self.assertEqual(PosterImages.objects.filter(poster_id=self.poster).count(), 1)
         existing_image = PosterImages.objects.get(poster_id=self.poster)
         self.assertEqual(existing_image.image_path, 'path/to/existing/image.jpg')
+
+class TestViewLogic(TestCase):
+    def setUp(self) -> None:
+        PosterCategories.objects.create(name='Hardware')
+        User.objects.create(username='sergei2')
+        self.poster1 = Poster.objects.create(
+            owner=User.objects.get(username='sergei2'),
+            phone_number='+79265847523',
+            email='chabrovs.dev@gmail.com',
+            header='Test Poster 1',
+            description="This is the first test poster.",
+            category=PosterCategories.objects.get(name='Hardware'),
+            price=Decimal(420.2),
+            currency='USD',
+        )
+        self.poster2 = Poster.objects.create(
+            owner=User.objects.get(username='sergei2'),
+            phone_number='+79265847523',
+            email='chabrovs.dev@gmail.com',
+            header='Another Poster',
+            description="Second test poster content.",
+            category=PosterCategories.objects.get(name='Hardware'),
+            price=Decimal(420.2),
+            currency='USD',
+        )
+        self.poster3 = Poster.objects.create(
+            owner=User.objects.get(username='sergei2'),
+            phone_number='+79265847523',
+            email='chabrovs.dev@gmail.com',
+            header='Test Poster 3',
+            description="Some other random content.",
+            category=PosterCategories.objects.get(name='Hardware'),
+            price=Decimal(420.2),
+            currency='USD',
+        )
+        self.poster4 = Poster.objects.create(
+            owner=User.objects.get(username='sergei2'),
+            phone_number='+79265847523',
+            email='chabrovs.dev@gmail.com',
+            header='Unique Header',
+            description="Completely different content.",
+            category=PosterCategories.objects.get(name='Hardware'),
+            price=Decimal(420.2),
+            currency='USD',
+        )
+        return super().setUp()
+    
+    def test_apply_search_filters_with_matching_query(self):
+        """
+        Test that posters with matching query in header or description are returned.
+        """
+        # Get a queryset of all posters
+        queryset = Poster.objects.all()
+        
+        # Apply search filters with a query that should match multiple posters
+        filtered_queryset = SearchQueryEngine.apply_search_filter(queryset, query="Test")
+
+        # We expect poster1 and poster3 to match the query
+        self.assertEqual(filtered_queryset.count(), 3)
+        self.assertIn(self.poster1, filtered_queryset)
+        self.assertIn(self.poster3, filtered_queryset)
+
+    def test_apply_search_filters_with_non_matching_query(self):
+        """
+        Test that an empty queryset is returned when no posters match the query.
+        """
+        # Get a queryset of all posters
+        queryset = Poster.objects.all()
+        
+        # Apply search filters with a query that matches no posters
+        filtered_queryset = SearchQueryEngine.apply_search_filter(queryset, query="Nonexistent")
+
+        # We expect no posters to match the query
+        self.assertEqual(filtered_queryset.count(), 0)
+
+    def test_apply_search_filters_with_no_query(self):
+        """
+        Test that the original queryset is returned when no query is provided.
+        """
+        # Get a queryset of all posters
+        queryset = Poster.objects.all()
+
+        # Apply search filters with no query (query=None)
+        filtered_queryset = SearchQueryEngine.apply_search_filter(queryset, query=None)
+
+        # We expect the original queryset to be returned (all posters)
+        self.assertEqual(filtered_queryset.count(), 4)
+        self.assertIn(self.poster1, filtered_queryset)
+        self.assertIn(self.poster2, filtered_queryset)
+        self.assertIn(self.poster3, filtered_queryset)
+        self.assertIn(self.poster4, filtered_queryset)
