@@ -18,6 +18,7 @@ from .business_logic.process_images_logic import (
     get_image_by_image_id_response,
     get_image_by_image_path_response,
     process_formset_with_images_for_model)
+
 # CACHE VARIABLES
 from .constants import (
     RECOMMENDED_POSTERS_CACHE_KEY,
@@ -29,9 +30,7 @@ class HomePageView(TemplateView):
     template_name = 'posters_app/index.html'
 
     def __init__(self, **kwargs: Any) -> None:
-        self.recommended_posters = FrequentQueries.get_recommended_posters(
-            cache_timeout=60 * 3
-        )
+        self.recommended_posters = FrequentQueries.get_recommended_posters()
         super().__init__(**kwargs)
 
     def get_page(self, queryset: QuerySet, chunk_size: int, page_number: int) -> Page:
@@ -56,7 +55,8 @@ class HomePageView(TemplateView):
         :Param search: A QuerySet of keywords (required for searching (filtering)). 
         """
         if search:
-            search_result = SearchQueryEngine.apply_search_filter(self.recommended_posters, search)
+            search_result = SearchQueryEngine.apply_search_filter(
+                self.recommended_posters, search)
             return self.get_page(search_result, chunk_size, page_number)
 
         return self.get_page(self.recommended_posters, chunk_size, page_number)
@@ -104,12 +104,12 @@ class CategoryView(ListView):
         """Retrieve posters by category, with optional search filtering."""
 
         category_name = self.kwargs.get('category_name')
-        #NOTE: DO not use cache or write validation for it.
-        queryset = FrequentQueries.get_posters_in_category(category_name=category_name, cache_enabled=False)
+        # NOTE: DO not use cache or write validation for it.
+        queryset = FrequentQueries.get_posters_in_category(
+            category_name=category_name)
         # Apply search filter if a search query is present
         search_query = self.request.GET.get('query')
         return SearchQueryEngine.apply_search_filter(queryset, search_query)
-
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Add extra context data for the category and search form."""
@@ -126,33 +126,10 @@ class PosterView(TemplateView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         poster_id = kwargs.get('poster_id')
-        poster = FrequentQueries.get_active_poster(
-            poster_id=poster_id,
-            cache_enabled=False
-        )
+        poster = FrequentQueries.get_active_poster(poster_id=poster_id)
         context['poster'] = poster
         context['user'] = self.request.user
         return context
-
-
-# NOTE: Not implemented (25.28.24) <devbackend_24_08_views>\
-# Login required.
-class UserPostersView(TemplateView):
-    template_name = 'posters_app/user_posters.html'
-
-    # def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-    #     context = super().get_context_data(**kwargs)
-    #     poster_id = kwargs.get('poster_id')
-    #     user_id = kwargs.get('user_id')
-    #     user_poster = Poster.objects.filter(id=poster_id, status=True, user_id=user_id).annotate(
-    #         image_ids=ArrayAgg('poster_images__id'),
-    #         formatted_created=FormatTimestamp(
-    #             'created', format_style='YYYY-MM-DD HH24:MI'),
-    #         price_rounded=RoundDecimal('price', decimal_places=2),
-    #         category_name=F('category__name')
-    #     )
-    #     context['user_posters'] = user_poster
-    #     return context
 
 
 @login_required

@@ -19,6 +19,16 @@
         </ul>
     </div>
     
+    <div class="panel panel-primary">
+        <div class="panel-heading">{% trans "My posters" %}</div>
+        <div class="panel-body">
+            <div class="list-group">
+                {% for poster in users_posters %}
+                <a href="{% url 'posters_app:poster_view' poster.id %}" class="list-group-item">{{ poster.header }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
     <div class="panel panel-info">
         <div class="panel-heading">Account management</div>

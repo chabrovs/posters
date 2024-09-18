@@ -169,6 +169,14 @@ cython_debug/
 # Media files
 media/
 .posters
+
+# Some statics
+posters/static/test
+posters/static/admin/
+posters/static/debug_toolbar/
+posters/static/posters_app/
+posters/static/user_account_app/
+posters/static/django_extensions/
 # Helper scripts
 *.sh
 
