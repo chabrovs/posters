@@ -1,8 +1,0 @@
-li {
-    list-style-type: none;
-}
-
-div.container ul.list-group li.list-group-item div.container-fluid img {
-    max-height: 150px;
-    max-width: 100px;
-}

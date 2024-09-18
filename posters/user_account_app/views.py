@@ -1,7 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, Http404
-from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView
 from .forms import CustomUserCreatingForm, UserProfileUpdateForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
@@ -11,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth import logout, login
 from .forms import EmailLogInForm, EmailLogInCodeVerificationForm
 from .business_logic.auth_logic import Auth
+from posters_app.business_logic.view_logic import FrequentQueries
 import logging
 from django.utils import translation
 
@@ -31,7 +29,8 @@ def view_user_account(request):
     user_fields = [
         (field.name, getattr(request.user, field.name)) for field in request.user._meta.fields]
     context = {
-        "user_fields": user_fields
+        "user_fields": user_fields,
+        "users_posters": FrequentQueries.get_users_posters(user_id=request.user.id)
     }
     return render(request, template_name, context)
 
