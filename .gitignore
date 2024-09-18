@@ -168,7 +168,7 @@ cython_debug/
 
 # Media files
 media/
-
+.posters
 # Helper scripts
 *.sh
 
