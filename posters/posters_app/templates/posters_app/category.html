@@ -19,19 +19,16 @@
     <h1>{% trans "All posters:" %}</h1>
     <ul class="list-group">
         {% for poster in posters %}
-        <li class="list-group-item">
-            <div class="container-fluid">
-                <h3 id="posterHeader"> {{ poster.header }} </h3>
-                <h4>Poster id: {{ poster.id }}</h4>
-                <a href="{% url 'posters_app:poster_view' poster.id %}">{% trans "About poster" %}</a>
-                <p id="posterDescription"> {{ poster.formatted_created }} </p>
-                <p id="posterPrice"> {{ poster.price_rounded }} </p>
-                <p id="posterCurrnecy"> {{ poster.currency }} </p>
-                <img src="{% url 'posters_app:get_image_by_image_id' poster.image_ids.0 %}" alt="Image">
-            </div>
-        </li>
-        
-            
+        <a href="{% url 'posters_app:poster_view' poster.id %}">
+            <li class="list-group-item">
+                <div class="container-fluid">
+                    <h3 id="posterHeader"> {{ poster.header }} </h3>
+                    <p id="posterDescription"> {{ poster.formatted_created }} </p>
+                    <p id="posterPrice"> {{ poster.price_rounded }} {{ poster.currency }} </p>
+                    <img src="{% url 'posters_app:get_image_by_image_id' poster.image_ids.0 %}" alt="Image">
+                </div>
+            </li>
+        </a>    
         {% endfor %}
     </ul>
 </div>

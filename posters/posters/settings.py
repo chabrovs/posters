@@ -30,7 +30,12 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '[::1]', '185.169.107.33', '95.221.162.245']
+ALLOWED_HOSTS = [
+    '127.0.0.1', '[::1]', '185.169.107.33',
+    'posters-petproject.ru', 'www.posters-petproject.ru',
+    'posters-petproject.online', '95.221.162.245',
+    'posters-petproject.localhost'
+]
 
 
 # Application definition
@@ -45,9 +50,11 @@ INSTALLED_APPS = [
     'django_extensions',
     'crispy_forms',
     'crispy_bootstrap4',
+
     'user_account_app',
     'posters_app',
     'email_service',
+
     'django_celery_results',
     'django_celery_beat',
     'rosetta',
@@ -197,7 +204,7 @@ if not DEBUG:
 SESSION_EXPIRE_ON_BROWSER_CLOSE = False
 
 
-#region: Django SECURITY FOR PRODUCTION
+# region: Django SECURITY FOR PRODUCTION
 
 # SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
 # SESSION_COOKIE_SECURE = True  # Cookies via HTTPS
@@ -207,7 +214,7 @@ SESSION_EXPIRE_ON_BROWSER_CLOSE = False
 # SECURE_HSTS_PRELOAD = True
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Recognize HTTPS from NGINX
 
-#endregion
+# endregion
 
 
 # Default primary key field type
