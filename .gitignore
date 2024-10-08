@@ -184,3 +184,5 @@ posters/static/django_extensions/
 nginx.conf
 redis.conf
 rabbitmq.conf
+
+backup_configs/

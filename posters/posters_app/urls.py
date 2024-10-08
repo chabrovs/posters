@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-# from .views import HomePageView, PosterView, get_image_by_image_id, get_image_by_image_path, reverse_test
+
 
 urlpatterns = [
     path('', views.HomePageView.as_view(), name='home'),

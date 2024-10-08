@@ -6,3 +6,11 @@ div.container ul.list-group li.list-group-item div.container-fluid img {
     max-height: 150px;
     max-width: 100px;
 }
+
+body > div.wrapper > main > div > ul > a {
+    color: #333;
+}
+
+body > div.wrapper > main > div > ul > a:hover {
+    color: #333;
+}
