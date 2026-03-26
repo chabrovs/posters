@@ -28,13 +28,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-    '127.0.0.1', '[::1]', '185.169.107.33',
-    'posters-petproject.ru', 'www.posters-petproject.ru',
-    'posters-petproject.online', '95.221.162.245',
-    'posters-petproject.localhost'
+    '127.0.0.1', '[::1]', '185.218.204.177', 'posters-petproject.chabrov.tech', 'www.posters-petproject.chabrov.tech'
 ]
 
 
@@ -178,12 +175,12 @@ if DEBUG:
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
     # Remove later
-    # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
     # Uncomment later
-    STATICFILES_DIRS = [
-        BASE_DIR / 'static'
-    ]
+    #STATICFILES_DIRS = [
+    #    BASE_DIR / 'static'
+    #]
 
 # endregion
 
@@ -206,13 +203,13 @@ SESSION_EXPIRE_ON_BROWSER_CLOSE = False
 
 # region: Django SECURITY FOR PRODUCTION
 
-# SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
-# SESSION_COOKIE_SECURE = True  # Cookies via HTTPS
-# CSRF_COOKIE_SECURE = True     # Secure CSRF cookies
-# SECURE_HSTS_SECONDS = 3600    # Use HTTP Strict Transport Security (HSTS)
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_HSTS_PRELOAD = True
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Recognize HTTPS from NGINX
+SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
+SESSION_COOKIE_SECURE = True  # Cookies via HTTPS
+CSRF_COOKIE_SECURE = True     # Secure CSRF cookies
+SECURE_HSTS_SECONDS = 3600    # Use HTTP Strict Transport Security (HSTS)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Recognize HTTPS from NGINX
 
 # endregion
 
